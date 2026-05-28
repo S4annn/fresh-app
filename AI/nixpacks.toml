@@ -1,0 +1,16 @@
+[phases.setup]
+nixPkgs = ["python311", "gcc"]
+aptPkgs = ["libgl1", "libglib2.0-0"]
+
+[phases.install]
+cmds = [
+  "python3.11 -m venv /opt/venv",
+  "/opt/venv/bin/pip install --upgrade pip",
+  "/opt/venv/bin/pip install --no-cache-dir -r requirements.txt"
+]
+
+[start]
+cmd = "/opt/venv/bin/uvicorn main:app --host 0.0.0.0 --port $PORT"
+
+[variables]
+PYTHON_VERSION = "3.11"
