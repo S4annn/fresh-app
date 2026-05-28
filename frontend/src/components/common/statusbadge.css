@@ -1,0 +1,43 @@
+.fresh-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  border: 1px solid transparent;
+  line-height: 1;
+}
+
+.fresh-badge--md { font-size: 12px; padding: 6px 11px; }
+.fresh-badge--sm { font-size: 11px; padding: 4px 8px; }
+
+.fresh-badge--success {
+  background: var(--color-success-soft);
+  color: #047a48;
+  border-color: rgba(4, 122, 72, 0.12);
+}
+
+.fresh-badge--warning {
+  background: var(--color-warning-soft);
+  color: #b54708;
+  border-color: rgba(181, 71, 8, 0.15);
+}
+
+.fresh-badge--danger {
+  background: var(--color-danger-soft);
+  color: #b32318;
+  border-color: rgba(179, 35, 24, 0.15);
+}
+
+.fresh-badge--info {
+  background: var(--color-info-soft);
+  color: #0a5fad;
+  border-color: rgba(10, 95, 173, 0.15);
+}
+
+.fresh-badge--neutral {
+  background: #eef2ef;
+  color: #475a51;
+  border-color: rgba(71, 90, 81, 0.12);
+}

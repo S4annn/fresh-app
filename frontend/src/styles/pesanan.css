@@ -1,0 +1,245 @@
+.pesanan-page {
+  width: 100%;
+  min-height: 100%;
+  padding: 14px 18px 28px;
+  background: #f7f8f7;
+}
+
+.pesanan-header {
+  margin-bottom: 14px;
+}
+
+.pesanan-header h1 {
+  font-size: 22px;
+  color: #173b24;
+  margin-bottom: 4px;
+}
+
+.pesanan-header p {
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.pesanan-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.pesanan-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.pesanan-card-header h2 {
+  font-size: 17px;
+  color: #173b24;
+}
+
+.pesanan-card-header span {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.pesanan-empty {
+  padding: 26px 0;
+  text-align: center;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.pesanan-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pesanan-item {
+  display: grid;
+  grid-template-columns: 1.4fr 0.9fr 0.9fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.pesanan-code {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.pesanan-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  background: #eef7f1;
+  color: #176b2c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.pesanan-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.pesanan-code h3 {
+  font-size: 14px;
+  color: #173b24;
+  margin-bottom: 4px;
+}
+
+.pesanan-code p {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #6b7280;
+  font-size: 11px;
+}
+
+.pesanan-code p svg,
+.pesanan-seller svg,
+.pesanan-address svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.pesanan-status-box p,
+.pesanan-total p {
+  font-size: 11px;
+  color: #6b7280;
+  margin-bottom: 6px;
+}
+
+.pesanan-total h3 {
+  font-size: 15px;
+  color: #173b24;
+}
+
+.status-pending,
+.status-process,
+.status-done,
+.status-cancelled {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.status-pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-process {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.status-done {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-cancelled {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.pesanan-detail-btn {
+  border: none;
+  background: #176b2c;
+  color: #ffffff;
+  padding: 8px 12px;
+  border-radius: 9px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: 0.2s ease;
+}
+
+.pesanan-detail-btn:hover {
+  background: #105f24;
+  transform: translateY(-1px);
+}
+
+.pesanan-detail-btn svg {
+  width: 15px;
+  height: 15px;
+}
+
+.pesanan-seller,
+.pesanan-address {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 5px;
+  font-size: 12px;
+  color: #4b5563;
+}
+
+.pesanan-seller {
+  font-weight: 700;
+  color: #166534;
+}
+
+.pesanan-address {
+  color: #6b7280;
+}
+
+@media (max-width: 1100px) {
+  .pesanan-item {
+    grid-template-columns: 1.3fr 0.8fr 0.8fr auto;
+    gap: 10px;
+  }
+}
+
+@media (max-width: 900px) {
+  .pesanan-page {
+    padding: 12px;
+  }
+
+  .pesanan-item {
+    grid-template-columns: 1fr;
+    align-items: flex-start;
+  }
+
+  .pesanan-detail-btn {
+    width: fit-content;
+  }
+}
+
+@media (max-width: 480px) {
+  .pesanan-card-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .pesanan-header h1 {
+    font-size: 19px;
+  }
+
+  .pesanan-card {
+    padding: 12px;
+  }
+
+  .pesanan-item {
+    padding: 10px;
+  }
+}

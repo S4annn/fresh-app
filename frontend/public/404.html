@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <title>F.R.E.S.H</title>
+    <script>
+      // SPA fallback for static hosts.
+      // Preserve the path so the SPA router can handle it after redirect.
+      var path = window.location.pathname + window.location.search + window.location.hash;
+      try {
+        sessionStorage.setItem('fresh:redirect', path);
+      } catch (_) {}
+      window.location.replace('/');
+    </script>
+  </head>
+  <body></body>
+</html>

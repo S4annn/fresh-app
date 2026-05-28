@@ -1,0 +1,193 @@
+.fresh-toast-stack {
+  position: fixed;
+  top: 22px;
+  right: 22px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: min(380px, calc(100vw - 32px));
+  pointer-events: none;
+}
+
+.fresh-toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  background: #ffffff;
+  color: var(--color-text);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-md);
+  animation: fresh-fade-in 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.fresh-toast::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+}
+
+.fresh-toast--success::before { background: var(--color-success); }
+.fresh-toast--error::before { background: var(--color-danger); }
+.fresh-toast--info::before { background: var(--color-info); }
+.fresh-toast--warning::before { background: var(--color-warning); }
+
+.fresh-toast__icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.fresh-toast--success .fresh-toast__icon { background: var(--color-success-soft); color: var(--color-success); }
+.fresh-toast--error .fresh-toast__icon { background: var(--color-danger-soft); color: var(--color-danger); }
+.fresh-toast--info .fresh-toast__icon { background: var(--color-info-soft); color: var(--color-info); }
+.fresh-toast--warning .fresh-toast__icon { background: var(--color-warning-soft); color: var(--color-warning); }
+
+.fresh-toast__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  word-break: break-word;
+}
+
+.fresh-toast__title {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.fresh-toast__message {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+.fresh-toast__close {
+  border: 0;
+  background: transparent;
+  color: var(--color-text-soft);
+  border-radius: 8px;
+  padding: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fresh-toast__close:hover {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+@media (max-width: 540px) {
+  .fresh-toast-stack {
+    top: 14px;
+    right: 14px;
+    left: 14px;
+    max-width: none;
+  }
+}
+
+.fresh-confirm {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.fresh-confirm__backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--color-overlay);
+  backdrop-filter: blur(2px);
+  animation: fresh-fade-in 0.2s ease;
+}
+.fresh-confirm__panel {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  border-radius: var(--radius-xl);
+  padding: 28px 26px 24px;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+  animation: fresh-fade-in 0.25s ease;
+}
+.fresh-confirm__icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+.fresh-confirm__icon--primary {
+  background: var(--color-primary-50);
+  color: var(--color-primary-700);
+}
+.fresh-confirm__icon--danger {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
+.fresh-confirm__icon--warning {
+  background: var(--color-warning-soft);
+  color: var(--color-warning);
+}
+.fresh-confirm__title {
+  font-size: 19px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--color-text);
+}
+.fresh-confirm__message {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  line-height: 1.55;
+  margin-bottom: 22px;
+}
+.fresh-confirm__actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.fresh-confirm__btn {
+  flex: 1 1 140px;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: var(--radius-md);
+  border: 0;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: inherit;
+  transition: transform var(--t-fast), background var(--t-fast),
+    border-color var(--t-fast), color var(--t-fast);
+}
+.fresh-confirm__btn--ghost {
+  background: var(--color-bg);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+.fresh-confirm__btn--ghost:hover { background: #eef2ef; }
+.fresh-confirm__btn--primary {
+  background: linear-gradient(135deg, var(--color-primary-600), var(--color-primary-800));
+  color: #fff;
+}
+.fresh-confirm__btn--primary:hover { transform: translateY(-1px); }
+.fresh-confirm__btn--danger { background: var(--color-danger); color: #fff; }
+.fresh-confirm__btn--danger:hover { background: #c93a31; }
+.fresh-confirm__btn--warning { background: var(--color-warning); color: #fff; }

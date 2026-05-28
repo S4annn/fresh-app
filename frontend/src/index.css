@@ -1,0 +1,278 @@
+/* =========================================================
+   F.R.E.S.H — Design tokens & global base
+   ========================================================= */
+
+:root {
+  --color-primary-50:  #ecfdf3;
+  --color-primary-100: #d1fadf;
+  --color-primary-200: #a6f4c5;
+  --color-primary-300: #6ce9a6;
+  --color-primary-400: #32d583;
+  --color-primary-500: #12b76a;
+  --color-primary-600: #039855;
+  --color-primary-700: #027a48;
+  --color-primary-800: #176b2c;
+  --color-primary-900: #054f31;
+
+  --color-bg:           #f6f9f7;
+  --color-bg-alt:       #ffffff;
+  --color-surface:      #ffffff;
+  --color-surface-soft: #f8faf8;
+  --color-border:       #e5ebe7;
+  --color-border-strong:#d3dcd6;
+  --color-overlay:      rgba(15, 23, 19, 0.55);
+
+  --color-text:        #11221a;
+  --color-text-muted:  #5a6a62;
+  --color-text-soft:   #8a9991;
+  --color-text-inverse:#ffffff;
+
+  --color-success:      #12b76a;
+  --color-success-soft: #e6f8ee;
+  --color-warning:      #f79009;
+  --color-warning-soft: #fff5e6;
+  --color-danger:       #e0463c;
+  --color-danger-soft:  #fdecea;
+  --color-info:         #2e90fa;
+  --color-info-soft:    #e8f2ff;
+
+  --status-fresh:   #12b76a;
+  --status-warning: #f79009;
+  --status-high:    #e0463c;
+  --status-expired: #6b7280;
+
+  /* Typography — Plus Jakarta Sans loaded via index.html */
+  --font-sans: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system,
+    BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --space-10:40px;
+  --space-12:48px;
+  --space-16:64px;
+
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl:24px;
+  --radius-full:999px;
+
+  --shadow-xs: 0 1px 2px rgba(15, 23, 19, 0.05);
+  --shadow-sm: 0 2px 6px rgba(15, 23, 19, 0.06);
+  --shadow-md: 0 6px 18px rgba(15, 23, 19, 0.08);
+  --shadow-lg: 0 14px 38px rgba(15, 23, 19, 0.12);
+  --shadow-focus: 0 0 0 4px rgba(18, 183, 106, 0.15);
+
+  --t-fast: 0.15s ease;
+  --t-base: 0.22s ease;
+  --t-slow: 0.4s ease;
+
+  --sidebar-width: 244px;
+  --sidebar-width-compact: 76px;
+  --header-height: 64px;
+}
+
+/* ===== HARD RESET ===== */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  /* Force every element to inherit font from body — overrides legacy CSS. */
+  font-family: inherit;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  font-size: 16px;
+  /* No global overflow on html — sticky elements need scroll on the html element. */
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system,
+    BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  font-size: 14.5px;
+  font-weight: 500;
+  line-height: 1.55;
+  letter-spacing: -0.005em;
+  color: var(--color-text);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  /* Don't set overflow on body — that would block position:sticky for nested children.
+     The browser handles scroll on the document by default. */
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  font-family: inherit;
+}
+
+img,
+picture,
+svg,
+video {
+  max-width: 100%;
+  display: block;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit !important;
+  font-size: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: 0;
+  font-family: inherit !important;
+  /* Don't reset background here — it would break gradient/colored buttons.
+     Each button class is responsible for its own background. */
+}
+
+/* ===== KILL ALL UNDERLINES ===== */
+/* Hard rule: nothing renders with underline unless explicitly opted in */
+a,
+a:link,
+a:visited,
+a:hover,
+a:focus,
+a:active {
+  color: inherit;
+  text-decoration: none !important;
+  background-color: transparent;
+  font-family: inherit !important;
+}
+
+a u,
+a strong,
+a span,
+a em,
+a b,
+a i {
+  text-decoration: none !important;
+}
+
+/* Only when explicitly opted in */
+a.has-underline,
+.has-underline {
+  text-decoration: underline !important;
+}
+
+ol,
+ul {
+  list-style: none;
+}
+
+/* ===== Headings — bold and tight for confident voice ===== */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif !important;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  color: var(--color-text);
+}
+
+h1 { font-weight: 800; letter-spacing: -0.035em; }
+h2 { font-weight: 800; letter-spacing: -0.03em; }
+h3 { font-weight: 800; letter-spacing: -0.02em; }
+h4 { font-weight: 700; letter-spacing: -0.015em; }
+
+p, span, div, li, label, strong, em, small {
+  font-family: inherit;
+}
+
+strong, b {
+  font-weight: 700;
+}
+
+::selection {
+  background: var(--color-primary-200);
+  color: var(--color-primary-900);
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: #d6e0d9;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: #b9c9bd;
+  background-clip: padding-box;
+  border: 2px solid transparent;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.fresh-skeleton {
+  position: relative;
+  overflow: hidden;
+  background: #eaf0ec;
+  border-radius: var(--radius-sm);
+}
+.fresh-skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.55) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: skeleton-shimmer 1.5s infinite;
+}
+@keyframes skeleton-shimmer {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(100%); }
+}
+
+@keyframes fresh-fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

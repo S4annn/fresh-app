@@ -1,0 +1,124 @@
+import api from './api'
+
+export async function register(userData) {
+  try {
+    const response = await api.post('/auth/register', userData)
+    return response.data.data
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Registrasi gagal')
+  }
+}
+
+export async function login({ email, password }) {
+  try {
+    const response = await api.post('/auth/login', {
+      email,
+      password,
+    })
+    return response.data.data
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Login gagal')
+  }
+}
+
+export async function loginGoogle(firebaseToken) {
+  try {
+    const response = await api.post('/auth/google', {
+      token: firebaseToken,
+    })
+    return response.data.data
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Login Google gagal')
+  }
+}
+
+export async function getProfile() {
+  try {
+    const response = await api.get('/users/profile')
+    return response.data.data
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Gagal mengambil profile')
+  }
+}
+
+export async function updateProfile(data) {
+  try {
+    const response = await api.put('/users/profile', data)
+    return response.data.data
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Gagal update profile')
+  }
+}
+
+export async function deleteAccount() {
+  try {
+    const response = await api.delete('/users/profile')
+    return response.data
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Gagal menghapus akun')
+  }
+}
+
+export function logout() {
+  localStorage.removeItem('token')
+  localStorage.removeItem('user')
+}
+
+export function isAuthenticated() {
+  return !!localStorage.getItem('token')
+}
+
+export function getCurrentUser() {
+  const user = localStorage.getItem('user')
+  return user ? JSON.parse(user) : null
+}
+
+export async function forgotPassword(email) {
+  try {
+    const response = await api.post('/auth/forgot-password', {
+      email,
+    })
+
+    return response.data
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || 'Gagal mengirim reset password'
+    )
+  }
+}
+
+export async function verifyOtp({ email, otpCode }) {
+  try {
+    const response = await api.post('/auth/verify-otp', {
+      email,
+      otpCode,
+    })
+    return response.data.data
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Verifikasi OTP gagal')
+  }
+}
+
+export async function resendOtp(email) {
+  try {
+    const response = await api.post('/auth/resend-otp', {
+      email,
+    })
+    return response.data
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Gagal mengirim ulang OTP')
+  }
+}
+
+export async function resetPassword({ email, otpCode, newPassword }) {
+  try {
+    const response = await api.post('/auth/reset-password', {
+      email,
+      otpCode,
+      newPassword,
+    })
+    return response.data
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Gagal reset password')
+  }
+}

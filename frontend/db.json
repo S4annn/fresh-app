@@ -1,0 +1,760 @@
+{
+  "users": [
+    {
+      "fullname": "tiafebriyanti",
+      "email": "tiafebriyanti22@gmail.com",
+      "password": "220204",
+      "address": "jambi",
+      "latitude": "-1.6589789309331378",
+      "longitude": "103.60510811021308",
+      "role": "pribadi",
+      "id": "iExSwqrPSwM"
+    },
+    {
+      "fullname": "tia",
+      "email": "tiafebriyanti31@gmail.com",
+      "password": "220204",
+      "address": "jakarta",
+      "latitude": "-1.659525",
+      "longitude": "103.604858",
+      "role": "bisnis",
+      "id": "0YwT45lOMuU"
+    },
+    {
+      "fullname": "ebi",
+      "email": "ebi@gmail.com",
+      "password": "222222",
+      "address": "jambi",
+      "latitude": "-1.659525",
+      "longitude": "103.604858",
+      "role": "bisnis",
+      "id": "-JMK63BDg5g"
+    },
+    {
+      "fullname": "ebi",
+      "email": "ebi22@gmail.com",
+      "password": "220204",
+      "address": "jakarta",
+      "latitude": "-1.6593836772187678",
+      "longitude": "103.60478903448275",
+      "role": "bisnis",
+      "id": "8xcyfuQlAFs"
+    },
+    {
+      "fullname": "tia",
+      "email": "tia@gmail.com",
+      "password": "220204",
+      "address": "bandung",
+      "latitude": "-1.659525",
+      "longitude": "103.604858",
+      "role": "pribadi",
+      "id": "3S8UW_uyW_s"
+    }
+  ],
+  "inventory": [
+    {
+      "name": "mangga",
+      "category": "buah",
+      "buyDate": "2026-05-14",
+      "expiryDate": "2026-05-16",
+      "amount": "2 kg",
+      "storage": "Rak Dapur",
+      "remaining": "2 hari lagi",
+      "status": "warning",
+      "priority": "medium",
+      "priorityLabel": "Medium",
+      "id": "dYnma6LHBJw"
+    },
+    {
+      "name": "ikan",
+      "category": "ikan",
+      "buyDate": "2026-05-16",
+      "expiryDate": "2026-05-26",
+      "amount": "7 kg",
+      "storage": "Kulkas",
+      "remaining": "11 hari lagi",
+      "status": "low",
+      "priority": "low",
+      "priorityLabel": "Low",
+      "id": "r9syXg4FcG0"
+    },
+    {
+      "name": "bayam",
+      "category": "sayur",
+      "buyDate": "2026-05-15",
+      "expiryDate": "2026-05-16",
+      "amount": "2 kg",
+      "storage": "Kulkas",
+      "remaining": "1 hari lagi",
+      "status": "danger",
+      "priority": "high",
+      "priorityLabel": "High",
+      "id": "YsgipDB5Qu0"
+    },
+    {
+      "name": "hhh",
+      "category": "sayur",
+      "buyDate": "2026-05-15",
+      "expiryDate": "2026-05-15",
+      "amount": "2 kg",
+      "storage": "Kulkas",
+      "remaining": "Hari ini",
+      "status": "danger",
+      "priority": "high",
+      "priorityLabel": "High",
+      "id": "Rfd9hnkQ3sE"
+    },
+    {
+      "name": "w",
+      "category": "buah",
+      "buyDate": "2026-05-23",
+      "expiryDate": "2026-05-16",
+      "amount": "2 ml",
+      "storage": "Freezer",
+      "remaining": "Hari ini",
+      "status": "danger",
+      "priority": "high",
+      "priorityLabel": "High",
+      "id": "p-QAa6nZxwU"
+    },
+    {
+      "name": "yy",
+      "category": "sayur",
+      "buyDate": "2026-05-16",
+      "expiryDate": "2026-05-16",
+      "amount": "7 kg",
+      "storage": "Freezer",
+      "remaining": "Hari ini",
+      "status": "danger",
+      "priority": "high",
+      "priorityLabel": "High",
+      "id": "u16-F4P5n8Y"
+    },
+    {
+      "name": "susu",
+      "category": "susu",
+      "buyDate": "2026-05-16",
+      "expiryDate": "2026-05-21",
+      "amount": "3 liter",
+      "storage": "Freezer",
+      "remaining": "5 hari lagi",
+      "status": "low",
+      "priority": "low",
+      "priorityLabel": "Low",
+      "id": "HEeLv0EjYAg"
+    }
+  ],
+  "recommendations": [],
+  "googleAuth": [
+    {
+      "id": "google-1",
+      "fullname": "Google User",
+      "email": "googleuser@gmail.com",
+      "provider": "google",
+      "token": "mock-google-token"
+    }
+  ],
+  "scanResults": [
+    {
+      "id": "1",
+      "name": "Daging Ayam",
+      "shelfLife": "1 hari",
+      "risk": "Tinggi",
+      "topPredictions": [
+        {
+          "name": "Daging Ayam",
+          "percent": 29
+        },
+        {
+          "name": "Ikan",
+          "percent": 50
+        },
+        {
+          "name": "Daging Sapi",
+          "percent": 1
+        }
+      ],
+      "storage": "Simpan di freezer dan segera gunakan untuk menghindari pembusukan.",
+      "recommendations": [
+        "Gunakan hari ini untuk kualitas terbaik.",
+        "Masak hingga matang sempurna.",
+        "Jangan konsumsi jika berbau tidak sedap."
+      ]
+    }
+  ],
+  "recipes": [
+    {
+      "title": "Rekomendasi Olahan bayam",
+      "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=900&q=80",
+      "ingredients": [
+        "bayam"
+      ],
+      "description": "Gunakan bayam segera karena bahan ini mendekati masa kadaluarsa.",
+      "id": "t0n5fIcUoFs"
+    },
+    {
+      "title": "Rekomendasi Olahan jeruk",
+      "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=900&q=80",
+      "ingredients": [
+        "jeruk"
+      ],
+      "description": "Gunakan jeruk segera karena bahan ini mendekati masa kadaluarsa.",
+      "id": "_gFIVP9vz7U"
+    },
+    {
+      "title": "Rekomendasi Olahan ikan",
+      "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=900&q=80",
+      "ingredients": [
+        "ikan"
+      ],
+      "description": "Gunakan ikan segera karena bahan ini mendekati masa kadaluarsa.",
+      "id": "c45zoXdf32o"
+    },
+    {
+      "title": "Rekomendasi Olahan bayam",
+      "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=900&q=80",
+      "ingredients": [
+        "bayam"
+      ],
+      "description": "Gunakan bayam segera karena bahan ini mendekati masa kadaluarsa.",
+      "id": "0QhRcGiZqJ8"
+    },
+    {
+      "title": "Rekomendasi Olahan mangga",
+      "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=900&q=80",
+      "ingredients": [
+        "mangga"
+      ],
+      "description": "Gunakan mangga segera karena bahan ini mendekati masa kadaluarsa.",
+      "id": "igReCgPmzcU"
+    },
+    {
+      "title": "Rekomendasi Olahan bayam",
+      "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=900&q=80",
+      "ingredients": [
+        "bayam"
+      ],
+      "description": "Gunakan bayam segera karena bahan ini mendekati masa kadaluarsa.",
+      "id": "W4zZcQwJ5Mk"
+    },
+    {
+      "title": "Rekomendasi Olahan hhh",
+      "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=900&q=80",
+      "ingredients": [
+        "hhh"
+      ],
+      "description": "Gunakan hhh segera karena bahan ini mendekati masa kadaluarsa.",
+      "id": "8C1UANGCjok"
+    },
+    {
+      "title": "Rekomendasi Olahan w",
+      "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=900&q=80",
+      "ingredients": [
+        "w"
+      ],
+      "description": "Gunakan w segera karena bahan ini mendekati masa kadaluarsa.",
+      "id": "UJfNDeSqkXk"
+    },
+    {
+      "title": "Rekomendasi Olahan yy",
+      "image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=900&q=80",
+      "ingredients": [
+        "yy"
+      ],
+      "description": "Gunakan yy segera karena bahan ini mendekati masa kadaluarsa.",
+      "id": "nTIGQXXctic"
+    }
+  ],
+  "marketplace": [
+    {
+      "id": "1",
+      "name": "Roti",
+      "price": "Rp 5,000",
+      "distance": "1 km",
+      "status": "aman",
+      "latitude": -1.6105,
+      "longitude": 103.6142,
+      "image": "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=500&q=80"
+    },
+    {
+      "id": "2",
+      "name": "Kol",
+      "price": "Rp 2,000",
+      "distance": "3 km",
+      "status": "hampir_kadaluarsa",
+      "latitude": -1.6068,
+      "longitude": 103.6215,
+      "image": "https://images.unsplash.com/photo-1594282486552-05b4d80fbb9f?auto=format&fit=crop&w=500&q=80"
+    },
+    {
+      "id": "3",
+      "name": "Nasi Kotak",
+      "price": "Rp 10,000",
+      "distance": "2 km",
+      "status": "kadaluarsa",
+      "latitude": -1.6151,
+      "longitude": 103.6084,
+      "image": "https://images.unsplash.com/photo-1604908177522-402f562d4c35?auto=format&fit=crop&w=500&q=80"
+    }
+  ],
+  "cart": [
+    {
+      "productId": "o0osLZY8V2w",
+      "name": "ayam",
+      "price": "Rp 10000",
+      "quantity": 1,
+      "image": "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1200&auto=format&fit=crop",
+      "id": "nti4LJLdljo"
+    },
+    {
+      "productId": "o0osLZY8V2w",
+      "name": "ayam",
+      "price": "Rp 10000",
+      "quantity": 2,
+      "image": "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1200&auto=format&fit=crop",
+      "id": "mfDEKCNlNf8"
+    },
+    {
+      "productId": "o0osLZY8V2w",
+      "name": "ayam",
+      "price": "Rp 10000",
+      "quantity": 1,
+      "image": "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1200&auto=format&fit=crop",
+      "id": "WVzkHa4BBBw"
+    }
+  ],
+  "orders": [
+    {
+      "orderCode": "ORD-1778752032181",
+      "date": "14 Mei 2026",
+      "seller": "Warung Sehat",
+      "status": "pending",
+      "items": [
+        {
+          "name": "Roti",
+          "price": "Rp 5,000",
+          "quantity": 1
+        }
+      ],
+      "total": 5000,
+      "id": "4fvxbm6hBJg"
+    },
+    {
+      "orderCode": "ORD-1778752515016",
+      "date": "14 Mei 2026",
+      "seller": "Warung Sehat",
+      "status": "cancelled",
+      "items": [
+        {
+          "name": "Roti",
+          "price": "Rp 5,000",
+          "quantity": 1
+        }
+      ],
+      "total": 5000,
+      "id": "je_u197sXLA"
+    },
+    {
+      "orderCode": "ORD-1778761626299",
+      "date": "14 Mei 2026",
+      "seller": "Warung Sehat",
+      "status": "cancelled",
+      "items": [
+        {
+          "name": "bayam",
+          "price": "Rp. 10000",
+          "quantity": 1
+        }
+      ],
+      "total": 10000,
+      "id": "SKKJn8xolBY"
+    },
+    {
+      "orderCode": "ORD-1778782414475",
+      "date": "15 Mei 2026",
+      "seller": "Warung Sehat",
+      "status": "pending",
+      "items": [
+        {
+          "name": "Roti",
+          "price": "Rp 5,000",
+          "quantity": 1
+        }
+      ],
+      "total": 5000,
+      "id": "O4gbKN8m4R8"
+    },
+    {
+      "orderCode": "ORD-1778816121048",
+      "productId": "JaQLqkxcBl0",
+      "productName": "udang",
+      "buyerName": "tia",
+      "buyerEmail": "tia@gmail.com",
+      "sellerName": "",
+      "sellerEmail": "",
+      "date": "15 Mei 2026",
+      "items": [
+        {
+          "name": "udang",
+          "price": "Rp 10000",
+          "quantity": 1
+        }
+      ],
+      "quantity": 1,
+      "total": 10000,
+      "status": "Dibatalkan",
+      "id": "dE-szoMYazM"
+    },
+    {
+      "orderCode": "ORD-1778816614547",
+      "productId": "JaQLqkxcBl0",
+      "productName": "udang",
+      "buyerName": "tia",
+      "buyerEmail": "tia@gmail.com",
+      "sellerName": "",
+      "sellerEmail": "",
+      "date": "15 Mei 2026",
+      "items": [
+        {
+          "name": "udang",
+          "price": "Rp 10000",
+          "quantity": 1
+        }
+      ],
+      "quantity": 1,
+      "total": 10000,
+      "status": "Diproses",
+      "id": "z1EKQrajeDY"
+    },
+    {
+      "orderCode": "ORD-1778817426558",
+      "productId": "Aicr-aqJ4ws",
+      "productName": "minyak",
+      "buyerName": "tia",
+      "buyerEmail": "tia@gmail.com",
+      "sellerName": "",
+      "sellerEmail": "",
+      "date": "15 Mei 2026",
+      "items": [
+        {
+          "name": "minyak",
+          "price": "Rp9000",
+          "quantity": 1
+        }
+      ],
+      "quantity": 1,
+      "total": 9000,
+      "status": "Diproses",
+      "id": "2i3sSyiOpN8"
+    },
+    {
+      "orderCode": "ORD-1778817968673",
+      "productId": "ge1bYIFkyJ8",
+      "productName": "gula",
+      "buyerName": "ebi",
+      "buyerEmail": "ebi22@gmail.com",
+      "sellerName": "tia",
+      "sellerEmail": "tia@gmail.com",
+      "date": "15 Mei 2026",
+      "items": [
+        {
+          "name": "gula",
+          "price": "Rp10000",
+          "quantity": 1
+        }
+      ],
+      "quantity": 1,
+      "total": 10000,
+      "status": "Diproses",
+      "id": "b-5AkuiyuFk"
+    },
+    {
+      "orderCode": "ORD-1778818637721",
+      "productId": "ynBbj5MaOWQ",
+      "productName": "tt",
+      "buyerName": "ebi",
+      "buyerEmail": "ebi22@gmail.com",
+      "sellerName": "ebi",
+      "sellerEmail": "ebi22@gmail.com",
+      "date": "15 Mei 2026",
+      "items": [
+        {
+          "name": "tt",
+          "price": "3",
+          "quantity": 1
+        }
+      ],
+      "quantity": 1,
+      "total": 3,
+      "status": "Diproses",
+      "id": "XWkUQhL0JJI"
+    },
+    {
+      "orderCode": "ORD-1778827313276",
+      "productId": "o0osLZY8V2w",
+      "productName": "ayam",
+      "buyerName": "tia",
+      "buyerEmail": "tia@gmail.com",
+      "sellerName": "",
+      "sellerEmail": "",
+      "date": "15 Mei 2026",
+      "items": [
+        {
+          "name": "ayam",
+          "price": "Rp 10000",
+          "quantity": 3
+        }
+      ],
+      "quantity": 3,
+      "total": 30000,
+      "status": "Dibatalkan",
+      "id": "HmWTrHgiOqE"
+    }
+  ],
+  "donations": [
+    {
+      "name": "ikan",
+      "amount": 1,
+      "unit": "dd",
+      "donor": "Rara",
+      "location": "dd",
+      "distance": "dd",
+      "expiry": "2026-05-14",
+      "ownerEmail": "rara@gmail.com",
+      "status": "available",
+      "id": "mz_bposBEaU"
+    }
+  ],
+  "donationRequests": [
+    {
+      "donationId": "mz_bposBEaU",
+      "donationName": "ikan",
+      "quantity": 1,
+      "unit": "dd",
+      "pickupTime": "2026-05-14T17:18",
+      "note": "dfd",
+      "requesterName": "Tia",
+      "requesterEmail": "tia@gmail.com",
+      "ownerEmail": "rara@gmail.com",
+      "donor": "Rara",
+      "location": "dd",
+      "status": "rejected",
+      "createdAt": "14 Mei 2026",
+      "id": "cgG5YL63VlU"
+    }
+  ],
+  "products": [
+    {
+      "name": "ayam",
+      "price": "Rp 10000",
+      "stock": "2",
+      "expired": "2026-05-14",
+      "amount": "2 pcs",
+      "status": "Tersedia",
+      "sellerName": "Tia",
+      "sellerEmail": "tia@gmail.com",
+      "location": "Jambi",
+      "latitude": "",
+      "longitude": "",
+      "distance": "1 km",
+      "image": "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1200&auto=format&fit=crop",
+      "id": "o0osLZY8V2w"
+    },
+    {
+      "name": "susu",
+      "price": "Rp 10000",
+      "stock": "1",
+      "expired": "2026-05-14",
+      "amount": "1 pcs",
+      "status": "Tersedia",
+      "sellerName": "ebi",
+      "sellerEmail": "ebi22@gmail.com",
+      "location": "jakarta",
+      "latitude": "-1.6593836772187678",
+      "longitude": "103.60478903448275",
+      "image": "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1200&auto=format&fit=crop",
+      "id": "rmCM2qc6W7M"
+    },
+    {
+      "name": "air",
+      "price": "Rp 2000",
+      "stock": "4",
+      "expired": "2026-05-15",
+      "amount": "4 pcs",
+      "status": "Tersedia",
+      "sellerName": "ebi",
+      "sellerEmail": "ebi22@gmail.com",
+      "location": "jakarta",
+      "latitude": "-1.6593836772187678",
+      "longitude": "103.60478903448275",
+      "image": "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1200&auto=format&fit=crop",
+      "id": "RUZzBbjdP40"
+    },
+    {
+      "name": "minyak",
+      "price": "Rp9000",
+      "stock": "9",
+      "expired": "2026-05-15",
+      "amount": "9 pcs",
+      "status": "Diproses",
+      "sellerName": "ebi",
+      "sellerEmail": "ebi22@gmail.com",
+      "location": "jakarta",
+      "latitude": "-1.6593836772187678",
+      "longitude": "103.60478903448275",
+      "image": "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1200&auto=format&fit=crop",
+      "id": "Aicr-aqJ4ws"
+    },
+    {
+      "name": "erer",
+      "price": "rr",
+      "stock": "3",
+      "expired": "2026-05-15",
+      "amount": "3 pcs",
+      "status": "Tersedia",
+      "sellerName": "ebi",
+      "sellerEmail": "ebi22@gmail.com",
+      "location": "jakarta",
+      "latitude": "-1.6593836772187678",
+      "longitude": "103.60478903448275",
+      "image": "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1200&auto=format&fit=crop",
+      "id": "wVgzq-TNgA4"
+    },
+    {
+      "name": "tr",
+      "price": "e",
+      "stock": "3",
+      "expired": "2026-05-15",
+      "amount": "3 pcs",
+      "status": "Tersedia",
+      "sellerName": "ebi",
+      "sellerEmail": "ebi22@gmail.com",
+      "location": "jakarta",
+      "latitude": "-1.6593836772187678",
+      "longitude": "103.60478903448275",
+      "image": "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1200&auto=format&fit=crop",
+      "id": "sgkD2OFxc5w"
+    },
+    {
+      "name": "tt",
+      "price": "3",
+      "stock": "3",
+      "expired": "2026-05-15",
+      "amount": "3 pcs",
+      "status": "Diproses",
+      "sellerName": "ebi",
+      "sellerEmail": "ebi22@gmail.com",
+      "location": "jakarta",
+      "latitude": "-1.6593836772187678",
+      "longitude": "103.60478903448275",
+      "image": "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1200&auto=format&fit=crop",
+      "id": "ynBbj5MaOWQ"
+    },
+    {
+      "name": "udang",
+      "price": "Rp 10000",
+      "stock": "4",
+      "expired": "2026-05-15",
+      "amount": "4 pcs",
+      "status": "Diproses",
+      "sellerName": "ebi",
+      "sellerEmail": "ebi22@gmail.com",
+      "location": "jakarta",
+      "latitude": "-1.6593836772187678",
+      "longitude": "103.60478903448275",
+      "image": "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1200&auto=format&fit=crop",
+      "id": "JaQLqkxcBl0"
+    },
+    {
+      "name": "yyy",
+      "price": "Rp 8000",
+      "stock": "7",
+      "expired": "2026-05-15",
+      "amount": "7 pcs",
+      "status": "Selesai",
+      "sellerName": "ebi",
+      "sellerEmail": "ebi22@gmail.com",
+      "location": "jakarta",
+      "latitude": "-1.6593836772187678",
+      "longitude": "103.60478903448275",
+      "image": "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1200&auto=format&fit=crop",
+      "id": "vYH9DfZMxmY"
+    },
+    {
+      "name": "gula",
+      "price": "Rp10000",
+      "stock": "3",
+      "expired": "2026-05-15",
+      "amount": "3 pcs",
+      "status": "Diproses",
+      "sellerName": "tia",
+      "sellerEmail": "tia@gmail.com",
+      "location": "bandung",
+      "latitude": "-1.659525",
+      "longitude": "103.604858",
+      "image": "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1200&auto=format&fit=crop",
+      "id": "ge1bYIFkyJ8"
+    },
+    {
+      "name": "bunga",
+      "price": "Rp. 30000",
+      "stock": "2",
+      "expired": "2026-05-16",
+      "amount": "2 pcs",
+      "status": "Tersedia",
+      "sellerName": "tia",
+      "sellerEmail": "tia@gmail.com",
+      "location": "bandung",
+      "latitude": "-1.659525",
+      "longitude": "103.604858",
+      "image": "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1200&auto=format&fit=crop",
+      "id": "culr1loHc50"
+    },
+    {
+      "name": "ihyhi",
+      "price": "iyi",
+      "stock": "7",
+      "expired": "2026-05-16",
+      "amount": "7 pcs",
+      "status": "Tersedia",
+      "sellerName": "tia",
+      "sellerEmail": "tia@gmail.com",
+      "location": "bandung",
+      "latitude": "-1.659525",
+      "longitude": "103.604858",
+      "image": "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1200&auto=format&fit=crop",
+      "id": "hMt0GLbq2Hc"
+    },
+    {
+      "name": "hh",
+      "price": "hhh",
+      "stock": "7",
+      "expired": "2026-05-16",
+      "amount": "7 pcs",
+      "status": "Tersedia",
+      "sellerName": "tia",
+      "sellerEmail": "tia@gmail.com",
+      "location": "bandung",
+      "latitude": "-1.659525",
+      "longitude": "103.604858",
+      "image": "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1200&auto=format&fit=crop",
+      "id": "LPywNjuEoN8"
+    },
+    {
+      "name": "yuuu",
+      "price": "nkml",
+      "stock": "9",
+      "expired": "2026-05-16",
+      "amount": "9 pcs",
+      "status": "Tersedia",
+      "sellerName": "tia",
+      "sellerEmail": "tia@gmail.com",
+      "location": "bandung",
+      "latitude": "-1.659525",
+      "longitude": "103.604858",
+      "image": "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1200&auto=format&fit=crop",
+      "id": "1H7OaetUY6M"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

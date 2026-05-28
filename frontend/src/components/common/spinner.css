@@ -1,0 +1,35 @@
+.fresh-spinner {
+  display: inline-block;
+  border: 2.5px solid rgba(18, 183, 106, 0.18);
+  border-top-color: var(--color-primary-600);
+  border-radius: 50%;
+  animation: fresh-spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
+.fresh-spinner-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fresh-spinner-fullscreen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 48px 16px;
+  width: 100%;
+  color: var(--color-text-muted);
+}
+
+.fresh-spinner-label {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+@keyframes fresh-spin {
+  to { transform: rotate(360deg); }
+}
