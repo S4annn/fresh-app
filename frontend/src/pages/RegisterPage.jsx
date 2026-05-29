@@ -117,59 +117,7 @@ export default function RegisterPage() {
     }
   }
 
-<<<<<<< HEAD
-=======
-  function getCurrentLocation() {
-    if (!window.isSecureContext) {
-      alert('Fitur lokasi hanya berfungsi di HTTPS atau localhost. Pastikan Anda mengakses melalui HTTPS.')
-      return
-    }
 
-    if (!navigator.geolocation) {
-      alert('Browser tidak mendukung fitur geolokasi')
-      return
-    }
-
-    setGettingLocation(true)
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setFormData((prev) => ({
-          ...prev,
-          latitude: position.coords.latitude.toString(),
-          longitude: position.coords.longitude.toString(),
-        }))
-        setGettingLocation(false)
-        alert('Lokasi berhasil diambil!')
-      },
-      (error) => {
-        console.error(error)
-        setGettingLocation(false)
-        let message = 'Gagal mengambil lokasi. '
-        switch (error.code) {
-          case error.PERMISSION_DENIED:
-            message += 'Izin lokasi ditolak. Silakan aktifkan izin lokasi di pengaturan browser Anda.'
-            break
-          case error.POSITION_UNAVAILABLE:
-            message += 'Informasi lokasi tidak tersedia. Pastikan GPS/lokasi aktif di perangkat Anda.'
-            break
-          case error.TIMEOUT:
-            message += 'Waktu permintaan lokasi habis. Coba lagi.'
-            break
-          default:
-            message += 'Terjadi kesalahan yang tidak diketahui.'
-        }
-        alert(message)
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 15000,
-        maximumAge: 0,
-      }
-    )
-  }
-
->>>>>>> 1ca02f4 (fix bug location)
   return (
     <div className="auth-page">
       <aside className="auth-page__visual">
@@ -392,16 +340,11 @@ export default function RegisterPage() {
             <button
               type="button"
               onClick={getCurrentLocation}
-<<<<<<< HEAD
               className="auth-btn-secondary"
-            >
-              <LocateFixed size={18} strokeWidth={2.2} />
-              Gunakan Lokasi Saya
-=======
               disabled={loading || gettingLocation}
             >
-              {gettingLocation ? 'Mengambil Lokasi...' : 'Ambil Lokasi Saya'}
->>>>>>> 1ca02f4 (fix bug location)
+              <LocateFixed size={18} strokeWidth={2.2} />
+              {gettingLocation ? 'Mengambil Lokasi...' : 'Gunakan Lokasi Saya'}
             </button>
             {form.latitude && form.longitude && (
               <iframe
