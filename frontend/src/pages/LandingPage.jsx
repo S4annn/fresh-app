@@ -39,6 +39,7 @@ import {
   PlayCircle,
 } from 'lucide-react'
 import logo from '../assets/images/logo.png'
+import emojiRobot from '../assets/images/emojirobot.svg'
 import '../styles/landing.css'
 
 const NAV_LINKS = [
@@ -383,7 +384,7 @@ export default function LandingPage() {
           <div className="lp-container lp-hero__grid">
             <div className="lp-hero__copy">
               <span className="lp-eyebrow">
-                <Sparkles size={12} strokeWidth={2.6} />
+                <img src={emojiRobot} alt="" style={{ width: 16, height: 16 }} />
                 Pengelolaan pangan berbasis AI
               </span>
               <h1>
@@ -550,7 +551,7 @@ export default function LandingPage() {
           <div className="lp-container lp-solution__grid">
             <div>
               <span className="lp-eyebrow">
-                <Sparkles size={12} strokeWidth={2.6} />
+                <img src={emojiRobot} alt="" style={{ width: 16, height: 16 }} />
                 Solusi terintegrasi
               </span>
               <h2>
