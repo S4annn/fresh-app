@@ -91,39 +91,112 @@ export default function ProfilePage() {
     setForm((prev) => ({ ...prev, [name]: value }))
   }
 
+  // Fallback: ambil lokasi via IP geolocation
+  async function getLocationViaIP() {
+    try {
+      feedback.info('GPS tidak tersedia, mencoba lokasi berdasarkan IP...', { duration: 3000 })
+      const response = await fetch('https://ipapi.co/json/')
+      if (!response.ok) throw new Error('IP geolocation gagal')
+      const data = await response.json()
+      if (data.latitude && data.longitude) {
+        const lat = parseFloat(data.latitude).toFixed(6)
+        const lng = parseFloat(data.longitude).toFixed(6)
+        setForm((prev) => ({ ...prev, latitude: lat, longitude: lng }))
+        feedback.success(
+          `Lokasi berhasil diambil (berdasarkan IP): ${data.city || 'Unknown'}, ${data.country_name || ''}`,
+          { duration: 5000 }
+        )
+        return true
+      }
+      return false
+    } catch (error) {
+      console.error('IP geolocation error:', error)
+      return false
+    }
+  }
+
   // Ambil lokasi via browser Geolocation API
   async function handleGetLocation() {
     if (!navigator.geolocation) {
-      feedback.error('Browser Anda tidak mendukung geolokasi.')
+      feedback.warning('Browser Anda tidak mendukung GPS. Mencoba lokasi berdasarkan IP...')
+      setLocating(true)
+      const success = await getLocationViaIP()
+      setLocating(false)
+      if (!success) {
+        feedback.error('Gagal mengambil lokasi. Silakan masukkan koordinat secara manual.')
+      }
       return
     }
+
     setLocating(true)
-    feedback.info('Mengambil lokasi...', { duration: 2000 })
+    
+    // Feedback bertahap
+    feedback.info('📍 Meminta izin lokasi dari browser...', { duration: 3000 })
+    
+    // Setelah 3 detik, kasih reminder
+    const reminderTimeout = setTimeout(() => {
+      if (locating) {
+        feedback.info('⏳ Menunggu GPS... Pastikan Anda sudah klik "Izinkan" di popup browser', { duration: 5000 })
+      }
+    }, 3000)
+    
+    // Setelah 15 detik, kasih warning
+    const warningTimeout = setTimeout(() => {
+      if (locating) {
+        feedback.warning('⚠️ GPS membutuhkan waktu lama. Jika gagal, sistem akan otomatis mencoba lokasi berdasarkan IP', { duration: 5000 })
+      }
+    }, 15000)
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const lat = position.coords.latitude.toFixed(6)
         const lng = position.coords.longitude.toFixed(6)
         setForm((prev) => ({ ...prev, latitude: lat, longitude: lng }))
-        feedback.success(`Lokasi berhasil diambil: ${lat}, ${lng}`)
+        feedback.success(`Lokasi GPS berhasil diambil: ${lat}, ${lng}`)
         setLocating(false)
       },
-      (err) => {
-        setLocating(false)
+      async (err) => {
+        console.error('Geolocation error:', err)
         if (err.code === 1) {
-          feedback.error(
-            'Izin lokasi ditolak. Klik ikon gembok di address bar → Lokasi → Izinkan, lalu refresh.',
-            { duration: 8000 }
+          // Permission denied
+          feedback.warning(
+            'Izin lokasi ditolak. Mencoba lokasi berdasarkan IP...',
+            { duration: 4000 }
           )
+          const success = await getLocationViaIP()
+          setLocating(false)
+          if (!success) {
+            feedback.error(
+              'Gagal mengambil lokasi. Untuk menggunakan GPS: Klik ikon gembok di address bar → Lokasi → Izinkan, lalu coba lagi.',
+              { duration: 8000 }
+            )
+          }
         } else if (err.code === 2) {
-          feedback.error('Lokasi tidak tersedia. Pastikan koneksi internet aktif.')
+          // Position unavailable
+          feedback.warning('GPS tidak tersedia. Mencoba lokasi berdasarkan IP...')
+          const success = await getLocationViaIP()
+          setLocating(false)
+          if (!success) {
+            feedback.error('Lokasi tidak dapat ditemukan. Pastikan koneksi internet aktif atau masukkan koordinat manual.')
+          }
         } else if (err.code === 3) {
-          feedback.error('Waktu habis. Pastikan izin lokasi aktif di browser, lalu coba lagi.')
+          // Timeout
+          feedback.warning('GPS timeout. Mencoba lokasi berdasarkan IP...')
+          const success = await getLocationViaIP()
+          setLocating(false)
+          if (!success) {
+            feedback.error('Waktu habis. Coba lagi atau masukkan koordinat secara manual.')
+          }
         } else {
+          setLocating(false)
           feedback.error('Gagal mengambil lokasi: ' + err.message)
         }
       },
-      { enableHighAccuracy: false, timeout: 15000, maximumAge: 60000 }
+      { 
+        enableHighAccuracy: true, 
+        timeout: 30000, // 30 detik
+        maximumAge: 0 // Selalu ambil lokasi terbaru
+      }
     )
   }
 
@@ -292,19 +365,6 @@ export default function ProfilePage() {
                   </span>
 
                   {hasLocation && (
-                    <div className="profile-location-box__coords">
-                      <div className="profile-location-box__coord">
-                        <span>Latitude</span>
-                        <strong>{form.latitude}</strong>
-                      </div>
-                      <div className="profile-location-box__coord">
-                        <span>Longitude</span>
-                        <strong>{form.longitude}</strong>
-                      </div>
-                    </div>
-                  )}
-
-                  {hasLocation && (
                     <div className="profile-map-preview">
                       <iframe
                         title="Pratinjau lokasi"
@@ -329,10 +389,76 @@ export default function ProfilePage() {
                     ) : (
                       <>
                         <MapPin size={16} strokeWidth={2.4} />
-                        {hasLocation ? 'Perbarui Lokasi Saya' : 'Ambil Lokasi Saya'}
+                        {hasLocation ? 'Perbarui Lokasi Otomatis' : 'Ambil Lokasi Otomatis'}
                       </>
                     )}
                   </button>
+
+                  {/* Instruksi untuk user */}
+                  <div style={{ 
+                    marginTop: 12,
+                    padding: '12px 16px',
+                    background: 'var(--color-bg-soft)',
+                    borderRadius: 8,
+                    fontSize: 13,
+                    lineHeight: 1.6,
+                    color: 'var(--color-text-soft)'
+                  }}>
+                    <strong style={{ display: 'block', marginBottom: 6, color: 'var(--color-text)' }}>
+                      💡 Tips mengambil lokasi:
+                    </strong>
+                    <ul style={{ margin: 0, paddingLeft: 20 }}>
+                      <li>Klik tombol "Ambil Lokasi Otomatis" di atas</li>
+                      <li>Browser akan meminta izin — <strong>klik "Izinkan"</strong></li>
+                      <li>Tunggu hingga 30 detik untuk GPS</li>
+                      <li>Jika GPS gagal, sistem akan otomatis mencoba lokasi berdasarkan IP</li>
+                      <li>Atau masukkan koordinat manual di bawah</li>
+                    </ul>
+                  </div>
+
+                  <div style={{ 
+                    marginTop: 16, 
+                    paddingTop: 16, 
+                    borderTop: '1px solid var(--color-border)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: 12
+                  }}>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--color-text-soft)' }}>
+                      Atau masukkan koordinat manual:
+                    </span>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                      <div className="profile-field" style={{ marginBottom: 0 }}>
+                        <label htmlFor="pf-lat" style={{ fontSize: 12 }}>Latitude</label>
+                        <input
+                          id="pf-lat"
+                          type="text"
+                          name="latitude"
+                          className="profile-input"
+                          value={form.latitude}
+                          onChange={handleFormChange}
+                          placeholder="-6.200000"
+                          style={{ fontSize: 13 }}
+                        />
+                      </div>
+                      <div className="profile-field" style={{ marginBottom: 0 }}>
+                        <label htmlFor="pf-lng" style={{ fontSize: 12 }}>Longitude</label>
+                        <input
+                          id="pf-lng"
+                          type="text"
+                          name="longitude"
+                          className="profile-input"
+                          value={form.longitude}
+                          onChange={handleFormChange}
+                          placeholder="106.816666"
+                          style={{ fontSize: 13 }}
+                        />
+                      </div>
+                    </div>
+                    <small style={{ fontSize: 11, color: 'var(--color-text-muted)', lineHeight: 1.4 }}>
+                      💡 Tip: Buka Google Maps, klik kanan pada lokasi Anda, lalu salin koordinat yang muncul.
+                    </small>
+                  </div>
                 </div>
 
                 <div className="profile-form-actions">
