@@ -37,9 +37,15 @@ export const registerUser = async (data) => {
   const existing = await getUserByEmail(email)
 
   if (existing) {
-    const error = new Error('Email sudah terdaftar')
-    error.statusCode = 409
-    throw error
+    if (existing.is_verified) {
+      const error = new Error('Email sudah terdaftar')
+      error.statusCode = 409
+      throw error
+    } else {
+      // Jika email ada TAPI belum terverifikasi, kita hapus data lamanya
+      // agar user bisa mendaftar ulang (misal karena salah ketik password atau OTP expired lama).
+      await deleteUser(existing.id)
+    }
   }
 
   const hashedPassword = await bcrypt.hash(password, 10)
