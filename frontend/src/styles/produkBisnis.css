@@ -183,6 +183,14 @@
   white-space: nowrap;
 }
 
+/* Kolom Aksi */
+.product-table th:last-child,
+.product-table td:last-child {
+  text-align: center;
+  vertical-align: middle;
+  width: 130px;
+}
+
 .product-name-cell h4 {
   font-size: 13px;
   font-weight: 700;
@@ -221,47 +229,52 @@
 }
 
 .action-buttons {
+  width: 100%;
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  gap: 10px;
 }
 
 .edit-btn,
 .delete-btn {
-  width: 30px;
-  height: 30px;
-  border-radius: 7px;
-  background: #ffffff;
+  width: 35px;
+  height: 35px;
+  border: none;
+  border-radius: 12px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.2s ease;
 }
 
 .edit-btn svg,
 .delete-btn svg {
-  width: 15px;
-  height: 15px;
+  width: 18px;
+  height: 18px;
 }
 
 .edit-btn {
-  border: 1.5px solid #078934;
-  color: #078934;
+  background: #dff5e5;
+  color: #16a34a;
 }
 
 .edit-btn:hover {
-  background: #078934;
+  background: #16a34a;
   color: #ffffff;
+  transform: translateY(-2px);
 }
 
 .delete-btn {
-  border: 1.5px solid #ef4444;
+  background: #fde2e2;
   color: #ef4444;
 }
 
 .delete-btn:hover {
   background: #ef4444;
   color: #ffffff;
+  transform: translateY(-2px);
 }
 
 .empty-product {

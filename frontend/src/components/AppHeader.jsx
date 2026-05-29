@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Bell, LogOut } from 'lucide-react'
+import { Bell, LogOut, Menu } from 'lucide-react'
 import { getUnreadNotificationCount } from '../services/notificationService'
 
 function readStoredUser() {
@@ -20,7 +20,7 @@ function getInitials(name) {
   return (parts[0][0] + parts[1][0]).toUpperCase()
 }
 
-export default function AppHeader({ title = 'DASHBOARD' }) {
+export default function AppHeader({ title = 'DASHBOARD', onOpenSidebar }) {
   const navigate = useNavigate()
   const [unreadCount, setUnreadCount] = useState(0)
 
@@ -29,7 +29,6 @@ export default function AppHeader({ title = 'DASHBOARD' }) {
       const total = await getUnreadNotificationCount()
       setUnreadCount(total)
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error(error)
     }
   }
@@ -49,20 +48,34 @@ export default function AppHeader({ title = 'DASHBOARD' }) {
   function handleOpenNotifications() {
     const user = readStoredUser()
     const role = String(user?.role || '').toLowerCase()
+
     if (role === 'business' || role === 'bisnis') {
       navigate('/notifications-bisnis')
       return
     }
+
     navigate('/notifications')
   }
 
   const user = readStoredUser()
   const userName = user?.fullname || user?.name || 'Pengguna'
-  const userRole = String(user?.role || '').toLowerCase() === 'bisnis' ? 'Bisnis' : 'Pribadi'
+  const userRole =
+    String(user?.role || '').toLowerCase() === 'bisnis'
+      ? 'Bisnis'
+      : 'Pribadi'
 
   return (
     <header className="app-header">
       <div className="app-header__title">
+        <button
+          type="button"
+          className="app-header__menu-btn"
+          onClick={onOpenSidebar}
+          aria-label="Buka menu"
+        >
+          <Menu size={20} strokeWidth={2.4} />
+        </button>
+
         <h1>{title}</h1>
       </div>
 
@@ -74,6 +87,7 @@ export default function AppHeader({ title = 'DASHBOARD' }) {
           aria-label="Notifikasi"
         >
           <Bell size={18} strokeWidth={2.2} />
+
           {unreadCount > 0 && (
             <span className="app-header__btn-badge">
               {unreadCount > 99 ? '99+' : unreadCount}
@@ -82,7 +96,10 @@ export default function AppHeader({ title = 'DASHBOARD' }) {
         </button>
 
         <div className="app-header__user">
-          <span className="app-header__avatar">{getInitials(userName)}</span>
+          <span className="app-header__avatar">
+            {getInitials(userName)}
+          </span>
+
           <div className="app-header__user-text">
             <strong>{userName}</strong>
             <span>Akun {userRole}</span>

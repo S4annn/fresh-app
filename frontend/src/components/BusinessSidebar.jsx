@@ -6,6 +6,7 @@ import {
   ShoppingCart,
   ShoppingBag,
   UserRound,
+  X,
 } from 'lucide-react'
 import logo from '../assets/images/logo.png'
 
@@ -18,14 +19,24 @@ const MENUS = [
   { path: '/profile-bisnis', label: 'Profil', icon: UserRound },
 ]
 
-export default function BusinessSidebar() {
+export default function BusinessSidebar({ isOpen = false, onClose }) {
   return (
-    <aside className="app-sidebar">
+    <aside className={`app-sidebar ${isOpen ? 'is-open' : ''}`}>
+      <button
+        type="button"
+        className="app-sidebar__close"
+        onClick={onClose}
+        aria-label="Tutup menu"
+      >
+        <X size={20} />
+      </button>
+
       <div className="app-sidebar__logo">
         <img src={logo} alt="" />
+
         <div className="app-sidebar__brand">
           <h1>F.R.E.S.H</h1>
-          <p>Pangan Efisien & Penanganan Cerdas</p>
+          <p>Food Resource & Smart Handling</p>
         </div>
       </div>
 
@@ -34,10 +45,12 @@ export default function BusinessSidebar() {
       <nav className="app-sidebar__menu" aria-label="Navigasi utama">
         {MENUS.map((menu) => {
           const Icon = menu.icon
+
           return (
             <NavLink
               key={menu.path}
               to={menu.path}
+              onClick={onClose}
               className={({ isActive }) =>
                 isActive
                   ? 'app-sidebar__item active'
