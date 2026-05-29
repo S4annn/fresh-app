@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Search, Clock3, Pencil, Trash2, X, CheckCircle } from 'lucide-react'
 import AppLayout from '../components/AppLayout'
+import { useFeedback } from '../components/feedback/feedbackContext'
 import { getInventory, updateInventory, deleteInventory } from '../services/inventoryService'
 import { createInventoryOut } from '../services/inventoryOutService'
 import '../styles/inventory.css'
 
 export default function InventoryPage() {
   const navigate = useNavigate()
+  const feedback = useFeedback()
   const [inventory, setInventory] = useState([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -19,11 +21,9 @@ export default function InventoryPage() {
   const [editId, setEditId] = useState(null)
   const [showUseModal, setShowUseModal] = useState(false)
   const [selectedInventory, setSelectedInventory] = useState(null)
-  const [useForm, setUseForm] = useState({
-    quantity: '',
-    notes: '',
-  })
+  const [useForm, setUseForm] = useState({ quantity: '', notes: '' })
   const [form, setForm] = useState({ food_name: '', quantity: '', unit: '', category: '', storage_location: '', purchase_date: '' })
+
   useEffect(() => {
     async function fetchInventory() {
       try {
@@ -31,13 +31,14 @@ export default function InventoryPage() {
         const data = await getInventory()
         setInventory(data || [])
       } catch (error) {
-        alert(error.message || 'Gagal mengambil data inventaris')
+        feedback.error(error.message || 'Gagal mengambil data inventaris')
         console.error(error)
       } finally {
         setLoading(false)
       }
     }
     fetchInventory()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   async function reloadInventory() {
@@ -104,15 +105,11 @@ export default function InventoryPage() {
 
   function openUseModal(item) {
     if (Number(item.quantity) <= 0 || item.status === 'empty') {
-      alert('Stok inventaris sudah habis')
+      feedback.warning('Stok inventaris sudah habis')
       return
     }
-
     setSelectedInventory(item)
-    setUseForm({
-      quantity: '',
-      notes: '',
-    })
+    setUseForm({ quantity: '', notes: '' })
     setShowUseModal(true)
   }
 
@@ -139,8 +136,9 @@ export default function InventoryPage() {
       })
       await reloadInventory()
       closeEditModal()
+      feedback.success('Inventaris berhasil diperbarui')
     } catch (error) {
-      alert(error.message || 'Gagal mengedit item')
+      feedback.error(error.message || 'Gagal mengedit item')
     } finally {
       setSaving(false)
     }
@@ -151,11 +149,11 @@ export default function InventoryPage() {
     if (!selectedInventory) return
     const quantity = Number(useForm.quantity)
     if (quantity <= 0) {
-      alert('Jumlah harus lebih dari 0')
+      feedback.warning('Jumlah harus lebih dari 0')
       return
     }
     if (quantity > Number(selectedInventory.quantity)) {
-      alert('Jumlah melebihi stok inventaris')
+      feedback.warning('Jumlah melebihi stok inventaris')
       return
     }
     try {
@@ -166,9 +164,9 @@ export default function InventoryPage() {
       })
       await reloadInventory()
       closeUseModal()
-      alert('Inventaris berhasil digunakan')
+      feedback.success('Inventaris berhasil digunakan')
     } catch (error) {
-      alert(error.message || 'Gagal menggunakan inventaris')
+      feedback.error(error.message || 'Gagal menggunakan inventaris')
       console.error(error)
     } finally {
       setSaving(false)
@@ -176,17 +174,19 @@ export default function InventoryPage() {
   }
 
   async function handleDelete(id) {
-    const confirmDelete = window.confirm(
-      'Yakin ingin menghapus item ini?'
-    )
-    if (!confirmDelete) return
+    const confirmed = await feedback.confirm({
+      title: 'Hapus Item',
+      message: 'Yakin ingin menghapus item ini? Tindakan ini tidak dapat dibatalkan.',
+      confirmLabel: 'Hapus',
+      cancelLabel: 'Batal',
+    })
+    if (!confirmed) return
     try {
       await deleteInventory(id)
-      setInventory((prev) =>
-        prev.filter((item) => item.id !== id)
-      )
+      setInventory((prev) => prev.filter((item) => item.id !== id))
+      feedback.success('Item berhasil dihapus')
     } catch (error) {
-      alert(error.message || 'Gagal menghapus item')
+      feedback.error(error.message || 'Gagal menghapus item')
     }
   }
 

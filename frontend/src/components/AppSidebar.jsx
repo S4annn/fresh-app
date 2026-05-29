@@ -9,6 +9,7 @@ import {
   Handshake,
   UserRound,
   X,
+  BarChart3,
 } from 'lucide-react'
 import logo from '../assets/images/logo.png'
 
@@ -20,6 +21,7 @@ const MENUS = [
   { path: '/marketplace', label: 'Marketplace', icon: ShoppingCart },
   { path: '/pesanan', label: 'Pesanan', icon: ShoppingBag },
   { path: '/donasi', label: 'Donasi', icon: Handshake },
+  { path: '/analytics', label: 'Analitik', icon: BarChart3 },
   { path: '/profile', label: 'Profil', icon: UserRound },
 ]
 

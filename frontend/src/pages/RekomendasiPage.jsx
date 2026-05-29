@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
 import { AlertTriangle, Info, ChefHat, ArrowUp } from 'lucide-react'
 import Layout from '../components/AppLayout'
+import { useFeedback } from '../components/feedback/feedbackContext'
 import { getRecommendations } from '../services/recommendationService'
 import '../styles/rekomendasi.css'
 
 export default function RecommendationPage() {
+  const feedback = useFeedback()
   const [useTodayItems, setUseTodayItems] = useState([])
   const [recommendations, setRecommendations] = useState([])
   const [loading, setLoading] = useState(true)
@@ -16,16 +18,14 @@ export default function RecommendationPage() {
         setUseTodayItems(data.use_today_items || [])
         setRecommendations(data.recommendations || [])
       } catch (error) {
-        alert(
-          error.message ||
-            'Gagal mengambil rekomendasi'
-        )
+        feedback.error(error.message || 'Gagal mengambil rekomendasi')
         console.error(error)
       } finally {
         setLoading(false)
       }
     }
     fetchRecommendations()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   function getStatusClass(status) {

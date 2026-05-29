@@ -28,6 +28,7 @@ import DashboardBisnisPage from './pages/DashboardBisnisPage'
 import ProdukBisnisPage from './pages/ProdukBisnisPage'
 import PesananBisnisPage from './pages/PesananBisnisPage'
 import AuthCallbackPage from './pages/AuthCallbackPage'
+import AnalyticsPage from './pages/AnalyticsPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 export default function App() {
@@ -66,6 +67,7 @@ export default function App() {
               <Route path="/notifications" element={<NotificationPage />} />
               <Route path="/donasi" element={<DonasiPage />} />
               <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/analytics" element={<AnalyticsPage />} />
             </Route>
 
             {/* BUSINESS ROLE */}
@@ -77,6 +79,7 @@ export default function App() {
               <Route path="/notifications-bisnis" element={<NotificationPage />} />
               <Route path="/marketplace-bisnis" element={<MarketplacePage />} />
               <Route path="/profile-bisnis" element={<ProfilePage />} />
+              <Route path="/analytics-bisnis" element={<AnalyticsPage />} />
             </Route>
 
             <Route path="*" element={<NotFoundPage />} />

@@ -3,11 +3,13 @@ import { MapPin, ShoppingCart, Trash2, Plus, Minus, Search } from 'lucide-react'
 import AppLayout from '../components/AppLayout'
 import BusinessLayout from '../components/BusinessLayout'
 import MarketplaceMap from '../components/MarketplaceMap'
+import { useFeedback } from '../components/feedback/feedbackContext'
 import { getMarketplaceProducts } from '../services/marketplaceService'
 import { createTransaction } from '../services/transactionService'
 import '../styles/marketplace.css'
 
 export default function MarketplacePage() {
+  const feedback = useFeedback()
   const [items, setItems] = useState([])
   const [cart, setCart] = useState([])
   const [search, setSearch] = useState('')
@@ -73,16 +75,12 @@ export default function MarketplacePage() {
   async function loadMarketplace(keyword = '') {
     try {
       setLoading(true)
-      const data =
-        await getMarketplaceProducts(keyword)
+      const data = await getMarketplaceProducts(keyword)
       setItems(data || [])
       setShowAllDistance(false)
     } catch (error) {
       console.error(error)
-      alert(
-        error.message ||
-          'Gagal mengambil produk marketplace'
-      )
+      feedback.error(error.message || 'Gagal mengambil produk marketplace')
       setItems([])
     } finally {
       setLoading(false)
@@ -132,59 +130,38 @@ export default function MarketplacePage() {
 
   function addToCart(product) {
     if (isBusiness) return
-    const existing = cart.find(
-      (item) => item.id === product.id
-    )
-
+    const existing = cart.find((item) => item.id === product.id)
     if (existing) {
       if (existing.quantity >= Number(product.stock)) {
-        alert('Jumlah melebihi stok produk')
+        feedback.warning('Jumlah melebihi stok produk')
         return
       }
-      setCart(
-        cart.map((item) =>
-          item.id === product.id
-            ? {
-                ...item,
-                quantity: item.quantity + 1,
-              }
-            : item
-        )
-      )
+      setCart(cart.map((item) =>
+        item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+      ))
       return
     }
-
-    setCart([
-      ...cart,
-      {
-        id: product.id,
-        product_name: product.product_name,
-        seller_name: product.seller_name,
-        price: Number(product.price),
-        stock: Number(product.stock),
-        unit: product.unit,
-        quantity: 1,
-      },
-    ])
+    setCart([...cart, {
+      id: product.id,
+      product_name: product.product_name,
+      seller_name: product.seller_name,
+      price: Number(product.price),
+      stock: Number(product.stock),
+      unit: product.unit,
+      quantity: 1,
+    }])
   }
 
   function increaseQuantity(productId) {
     if (isBusiness) return
-    setCart(
-      cart.map((item) => {
-        if (item.id !== productId) {
-          return item
-        }
-        if (item.quantity >= item.stock) {
-          alert('Jumlah melebihi stok produk')
-          return item
-        }
-        return {
-          ...item,
-          quantity: item.quantity + 1,
-        }
-      })
-    )
+    setCart(cart.map((item) => {
+      if (item.id !== productId) return item
+      if (item.quantity >= item.stock) {
+        feedback.warning('Jumlah melebihi stok produk')
+        return item
+      }
+      return { ...item, quantity: item.quantity + 1 }
+    }))
   }
 
   function decreaseQuantity(productId) {
@@ -222,14 +199,11 @@ export default function MarketplacePage() {
 
   async function handleCreateOrder() {
     if (isBusiness) {
-      alert(
-        'Akun bisnis tidak dapat melakukan transaksi.'
-      )
+      feedback.warning('Akun bisnis tidak dapat melakukan transaksi.')
       return
     }
-
     if (cart.length === 0) {
-      alert('Keranjang masih kosong')
+      feedback.warning('Keranjang masih kosong')
       return
     }
     try {
@@ -239,16 +213,13 @@ export default function MarketplacePage() {
         quantity: item.quantity,
       }))
       await createTransaction(payload)
-      alert('Pesanan berhasil dibuat')
+      feedback.success('Pesanan berhasil dibuat')
       setCart([])
       localStorage.removeItem('marketplace_cart')
       await loadMarketplace(search)
     } catch (error) {
       console.error(error)
-      alert(
-        error.message ||
-          'Gagal membuat pesanan'
-      )
+      feedback.error(error.message || 'Gagal membuat pesanan')
     } finally {
       setOrdering(false)
     }

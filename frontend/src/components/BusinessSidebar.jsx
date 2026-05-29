@@ -7,6 +7,7 @@ import {
   ShoppingBag,
   UserRound,
   X,
+  BarChart3,
 } from 'lucide-react'
 import logo from '../assets/images/logo.png'
 
@@ -16,6 +17,7 @@ const MENUS = [
   { path: '/scanner-bisnis', label: 'Pemindai AI', icon: ScanSearch },
   { path: '/marketplace-bisnis', label: 'Marketplace', icon: ShoppingCart },
   { path: '/pesanan-bisnis', label: 'Pesanan', icon: ShoppingBag },
+  { path: '/analytics-bisnis', label: 'Analitik', icon: BarChart3 },
   { path: '/profile-bisnis', label: 'Profil', icon: UserRound },
 ]
 

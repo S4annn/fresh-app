@@ -1,11 +1,21 @@
 import { useEffect, useState } from 'react'
-import { MapPin, Plus, X, Trash2 } from 'lucide-react'
+import { MapPin, Plus, X, Trash2, CheckCircle, XCircle } from 'lucide-react'
 import Layout from '../components/AppLayout'
 import DonationMap from '../components/DonationMap'
-import { getDonations, addDonation, deleteDonation, addDonationRequest, getDonationRequests, getMyDonationRequests, updateDonationRequestStatus } from '../services/donationService'
+import { useFeedback } from '../components/feedback/feedbackContext'
+import {
+  getDonations,
+  addDonation,
+  deleteDonation,
+  addDonationRequest,
+  getDonationRequests,
+  getMyDonationRequests,
+  updateDonationRequestStatus,
+} from '../services/donationService'
 import '../styles/donasi.css'
 
 export default function DonasiPage() {
+  const feedback = useFeedback()
   const [donations, setDonations] = useState([])
   const [requests, setRequests] = useState([])
   const [myRequests, setMyRequests] = useState([])
@@ -16,13 +26,12 @@ export default function DonasiPage() {
   const [showAddModal, setShowAddModal] = useState(false)
   const [showAllDistance, setShowAllDistance] = useState(false)
   const [requestForm, setRequestForm] = useState({ quantity: 1, pickup_time: '', notes: '' })
-  const [newDonation, setNewDonation] = useState({ food_name: '', quantity: '', unit: '', pickup_location: '', expiry_date: '', notes: '' })
+  const [newDonation, setNewDonation] = useState({
+    food_name: '', quantity: '', unit: '', pickup_location: '', expiry_date: '', notes: '',
+  })
 
   async function loadIncomingRequests(donationData) {
-    const myDonationItems = donationData.filter(
-      (item) => item.is_my_donation === true
-    )
-
+    const myDonationItems = donationData.filter((item) => item.is_my_donation === true)
     const requestResults = await Promise.all(
       myDonationItems.map(async (donation) => {
         try {
@@ -53,7 +62,7 @@ export default function DonasiPage() {
       setMyRequests(myRequestData || [])
       await loadIncomingRequests(donationData || [])
     } catch (error) {
-      alert(error.message || 'Gagal mengambil data donasi')
+      feedback.error(error.message || 'Gagal mengambil data donasi')
       console.error(error)
     } finally {
       setLoading(false)
@@ -92,11 +101,7 @@ export default function DonasiPage() {
   }
 
   useEffect(() => {
-    async function loadData() {
-      await fetchData()
-    }
-    loadData()
-
+    fetchData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -127,21 +132,13 @@ export default function DonasiPage() {
     return !Number.isNaN(distance) && distance > 10
   })
 
-  const otherDonations = showAllDistance
-    ? availableOtherDonations
-    : nearDonations
+  const otherDonations = showAllDistance ? availableOtherDonations : nearDonations
   const farDonationCount = farDonations.length
-  const myDonations = donations.filter(
-    (item) => item.is_my_donation === true
-  )
+  const myDonations = donations.filter((item) => item.is_my_donation === true)
 
   function openRequestModal(item) {
     setSelectedDonation(item)
-    setRequestForm({
-      quantity: 1,
-      pickup_time: '',
-      notes: '',
-    })
+    setRequestForm({ quantity: 1, pickup_time: '', notes: '' })
   }
 
   function closeRequestModal() {
@@ -154,11 +151,11 @@ export default function DonasiPage() {
     const requestedQuantity = Number(requestForm.quantity)
     const availableQuantity = Number(selectedDonation.remaining_quantity)
     if (requestedQuantity < 1) {
-      alert('Jumlah minimal 1')
+      feedback.warning('Jumlah minimal 1')
       return
     }
     if (requestedQuantity > availableQuantity) {
-      alert('Jumlah request melebihi stok donasi')
+      feedback.warning('Jumlah permintaan melebihi stok donasi')
       return
     }
     try {
@@ -171,9 +168,9 @@ export default function DonasiPage() {
       closeRequestModal()
       setActiveTab('myRequests')
       await refreshData()
-      alert('Request donasi berhasil dikirim')
+      feedback.success('Permintaan donasi berhasil dikirim')
     } catch (error) {
-      alert(error.message)
+      feedback.error(error.message || 'Gagal mengirim permintaan donasi')
       console.error(error)
     } finally {
       setActionLoading(false)
@@ -185,20 +182,16 @@ export default function DonasiPage() {
       setActionLoading(true)
       await updateDonationRequestStatus(request.id, status)
       setRequests((prev) =>
-        prev.map((item) =>
-          item.id === request.id
-            ? { ...item, status }
-            : item
-        )
+        prev.map((item) => item.id === request.id ? { ...item, status } : item)
       )
       await refreshData()
-      alert(
+      feedback.success(
         status === 'approved'
-          ? 'Request berhasil diterima'
-          : 'Request berhasil ditolak'
+          ? 'Permintaan berhasil diterima'
+          : 'Permintaan berhasil ditolak'
       )
     } catch (error) {
-      alert(error.message)
+      feedback.error(error.message || 'Gagal memperbarui status permintaan')
       console.error(error)
     } finally {
       setActionLoading(false)
@@ -217,20 +210,13 @@ export default function DonasiPage() {
         expiry_date: newDonation.expiry_date,
         notes: newDonation.notes || null,
       })
-      setNewDonation({
-        food_name: '',
-        quantity: '',
-        unit: '',
-        pickup_location: '',
-        expiry_date: '',
-        notes: '',
-      })
+      setNewDonation({ food_name: '', quantity: '', unit: '', pickup_location: '', expiry_date: '', notes: '' })
       setShowAddModal(false)
       setActiveTab('mine')
       await refreshData()
-      alert('Donasi berhasil ditambahkan')
+      feedback.success('Donasi berhasil ditambahkan')
     } catch (error) {
-      alert(error.message)
+      feedback.error(error.message || 'Gagal menambahkan donasi')
       console.error(error)
     } finally {
       setActionLoading(false)
@@ -238,18 +224,21 @@ export default function DonasiPage() {
   }
 
   async function handleDeleteDonation(id) {
-    const confirmDelete = confirm('Yakin ingin menghapus donasi ini?')
-    if (!confirmDelete) return
+    const confirmed = await feedback.confirm({
+      title: 'Hapus Donasi',
+      message: 'Yakin ingin menghapus donasi ini? Tindakan ini tidak dapat dibatalkan.',
+      confirmLabel: 'Hapus',
+      cancelLabel: 'Batal',
+    })
+    if (!confirmed) return
     try {
       setActionLoading(true)
       await deleteDonation(id)
-      setDonations((prev) =>
-        prev.filter((item) => item.id !== id)
-      )
+      setDonations((prev) => prev.filter((item) => item.id !== id))
       await refreshData()
-      alert('Donasi berhasil dihapus')
+      feedback.success('Donasi berhasil dihapus')
     } catch (error) {
-      alert(error.message)
+      feedback.error(error.message || 'Gagal menghapus donasi')
       console.error(error)
     } finally {
       setActionLoading(false)
@@ -272,15 +261,10 @@ export default function DonasiPage() {
     const date = new Date(dateString)
     if (Number.isNaN(date.getTime())) return '-'
     const tanggal = date.toLocaleDateString('id-ID', {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric',
-      timeZone: 'Asia/Jakarta',
+      day: '2-digit', month: 'long', year: 'numeric', timeZone: 'Asia/Jakarta',
     })
     const jam = date.toLocaleTimeString('id-ID', {
-      hour: '2-digit',
-      minute: '2-digit',
-      timeZone: 'Asia/Jakarta',
+      hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Jakarta',
     })
     return `${tanggal} • ${jam} WIB`
   }
@@ -290,76 +274,45 @@ export default function DonasiPage() {
       <section className="donation-content">
         <div className="donation-card">
           {actionLoading && (
-            <div className="donation-action-loading">
-              Memperbarui data...
-            </div>
+            <div className="donation-action-loading">Memperbarui data...</div>
           )}
           <div className="donation-top-actions">
             <button
               type="button"
-              className={
-                activeTab === 'others'
-                  ? 'donation-filter-btn active'
-                  : 'donation-filter-btn'
-              }
+              className={activeTab === 'others' ? 'donation-filter-btn active' : 'donation-filter-btn'}
               onClick={() => setActiveTab('others')}
             >
               Donasi Orang Lain
             </button>
             <button
               type="button"
-              className={
-                activeTab === 'myRequests'
-                  ? 'donation-filter-btn active'
-                  : 'donation-filter-btn'
-              }
+              className={activeTab === 'myRequests' ? 'donation-filter-btn active' : 'donation-filter-btn'}
               onClick={() => setActiveTab('myRequests')}
             >
-              Request Saya
+              Permintaan Saya
             </button>
             <button
               type="button"
-              className={
-                activeTab === 'mine'
-                  ? 'donation-filter-btn active'
-                  : 'donation-filter-btn'
-              }
+              className={activeTab === 'mine' ? 'donation-filter-btn active' : 'donation-filter-btn'}
               onClick={() => setActiveTab('mine')}
             >
               Donasi Saya
             </button>
           </div>
+
           {loading ? (
-            <div className="donation-body-loading">
-              Memuat donasi...
-            </div>
+            <div className="donation-body-loading">Memuat donasi...</div>
           ) : activeTab === 'myRequests' ? (
             <div className="request-list">
               {myRequests.length > 0 ? (
                 myRequests.map((request) => (
                   <div className="request-item" key={request.id}>
                     <div>
-                      <h3>
-                        {request.food_name ||
-                          request.donation_food_name ||
-                          'Donasi'}
-                      </h3>
+                      <h3>{request.food_name || request.donation_food_name || 'Donasi'}</h3>
                       <p>Donatur: {request.donor_name || '-'}</p>
-                      <p>
-                        Alamat:{' '}
-                        {request.pickup_location ||
-                          request.donor_address ||
-                          request.address ||
-                          '-'}
-                      </p>
-                      <p>
-                        Jumlah: {request.quantity}{' '}
-                        {request.unit || request.donation_unit || ''}
-                      </p>
-                      <p>
-                        Waktu Ambil:{' '}
-                        {formatPickupTime(request.pickup_time)}
-                      </p>
+                      <p>Alamat: {request.pickup_location || request.donor_address || request.address || '-'}</p>
+                      <p>Jumlah: {request.quantity} {request.unit || request.donation_unit || ''}</p>
+                      <p>Waktu Ambil: {formatPickupTime(request.pickup_time)}</p>
                       <p>Catatan: {request.notes || '-'}</p>
                       <span className={`request-status ${request.status}`}>
                         {getStatusText(request.status)}
@@ -368,9 +321,7 @@ export default function DonasiPage() {
                   </div>
                 ))
               ) : (
-                <div className="donation-empty">
-                  Belum ada request donasi yang kamu kirim.
-                </div>
+                <div className="donation-empty">Belum ada permintaan donasi yang kamu kirim.</div>
               )}
             </div>
           ) : activeTab === 'others' ? (
@@ -387,17 +338,11 @@ export default function DonasiPage() {
                 <button
                   type="button"
                   className="show-distance-btn"
-                  onClick={() =>
-                    setShowAllDistance((prev) => !prev)
-                  }
+                  onClick={() => setShowAllDistance((prev) => !prev)}
                 >
                   {showAllDistance
                     ? 'Tampilkan ≤ 10 km'
-                    : `Tampilkan Semua${
-                        farDonationCount > 0
-                          ? ` (${farDonationCount} jauh)`
-                          : ''
-                      }`}
+                    : `Tampilkan Semua${farDonationCount > 0 ? ` (${farDonationCount} jauh)` : ''}`}
                 </button>
               </div>
               <div className="donation-list">
@@ -406,24 +351,16 @@ export default function DonasiPage() {
                     <div className="donation-item" key={item.id}>
                       <div className="donation-left">
                         <h2>{item.food_name}</h2>
-                        <h3>
-                          {item.remaining_quantity} {item.unit}
-                        </h3>
+                        <h3>{item.remaining_quantity} {item.unit}</h3>
                         <p>Donatur: {item.donor_name || '-'}</p>
-                        <p>
-                          Lokasi: {item.pickup_location || '-'}
-                        </p>
+                        <p>Lokasi: {item.pickup_location || '-'}</p>
                       </div>
                       <div className="donation-middle">
                         <div className="donation-distance">
                           <MapPin size={30} strokeWidth={2.2} />
-                          <span>
-                            {formatDistance(item.donation_distance)}
-                          </span>
+                          <span>{formatDistance(item.donation_distance)}</span>
                         </div>
-                        <p>
-                          Kadaluarsa: {item.expiry_date || '-'}
-                        </p>
+                        <p>Kedaluwarsa: {item.expiry_date || '-'}</p>
                       </div>
                       <div className="donation-right">
                         <button
@@ -432,7 +369,7 @@ export default function DonasiPage() {
                           onClick={() => openRequestModal(item)}
                           disabled={actionLoading}
                         >
-                          Request Donasi
+                          Minta Donasi
                         </button>
                       </div>
                     </div>
@@ -465,21 +402,16 @@ export default function DonasiPage() {
                   {myDonations.length > 0 ? (
                     myDonations.map((item) => {
                       const itemRequests = requests.filter(
-                        (request) =>
-                          Number(request.donation_id) === Number(item.id)
+                        (request) => Number(request.donation_id) === Number(item.id)
                       )
                       return (
                         <div className="my-donation-item" key={item.id}>
                           <div>
                             <h3>{item.food_name}</h3>
-                            <p>
-                              Sisa: {item.remaining_quantity} {item.unit}
-                            </p>
-                            <p className="donation-location">
-                              {item.pickup_location || '-'}
-                            </p>
+                            <p>Sisa: {item.remaining_quantity} {item.unit}</p>
+                            <p className="donation-location">{item.pickup_location || '-'}</p>
                             <p>Status: {item.status}</p>
-                            <p>Request Masuk: {itemRequests.length}</p>
+                            <p>Permintaan Masuk: {itemRequests.length}</p>
                           </div>
                           <button
                             type="button"
@@ -494,41 +426,24 @@ export default function DonasiPage() {
                       )
                     })
                   ) : (
-                    <div className="donation-empty">
-                      Belum ada item donasi saya.
-                    </div>
+                    <div className="donation-empty">Belum ada item donasi saya.</div>
                   )}
                 </div>
               </div>
               <div className="request-column">
                 <div className="column-header">
-                  <h2>Request Masuk</h2>
+                  <h2>Permintaan Masuk</h2>
                 </div>
                 <div className="request-list">
                   {requests.length > 0 ? (
                     requests.map((request) => (
                       <div className="request-item" key={request.id}>
                         <div>
-                          <h3>
-                            {request.donation_food_name || 'Donasi'}
-                          </h3>
-                          <p>
-                            Pemohon: {request.requester_name || '-'}
-                          </p>
-                          <p>
-                            Alamat:{' '}
-                            {request.requester_address ||
-                              request.address ||
-                              '-'}
-                          </p>
-                          <p>
-                            Jumlah: {request.quantity}{' '}
-                            {request.donation_unit || ''}
-                          </p>
-                          <p>
-                            Waktu Ambil:{' '}
-                            {formatPickupTime(request.pickup_time)}
-                          </p>
+                          <h3>{request.donation_food_name || 'Donasi'}</h3>
+                          <p>Pemohon: {request.requester_name || '-'}</p>
+                          <p>Alamat: {request.requester_address || request.address || '-'}</p>
+                          <p>Jumlah: {request.quantity} {request.donation_unit || ''}</p>
+                          <p>Waktu Ambil: {formatPickupTime(request.pickup_time)}</p>
                           <p>Catatan: {request.notes || '-'}</p>
                           <span className={`request-status ${request.status}`}>
                             {getStatusText(request.status)}
@@ -539,31 +454,27 @@ export default function DonasiPage() {
                             <button
                               type="button"
                               className="accept-btn"
-                              onClick={() =>
-                                handleRequestStatus(request, 'approved')
-                              }
+                              onClick={() => handleRequestStatus(request, 'approved')}
                               disabled={actionLoading}
                             >
-                              Approve
+                              <CheckCircle size={16} />
+                              Terima
                             </button>
                             <button
                               type="button"
                               className="reject-btn"
-                              onClick={() =>
-                                handleRequestStatus(request, 'rejected')
-                              }
+                              onClick={() => handleRequestStatus(request, 'rejected')}
                               disabled={actionLoading}
                             >
-                              Reject
+                              <XCircle size={16} />
+                              Tolak
                             </button>
                           </div>
                         )}
                       </div>
                     ))
                   ) : (
-                    <div className="donation-empty">
-                      Belum ada request masuk.
-                    </div>
+                    <div className="donation-empty">Belum ada permintaan masuk.</div>
                   )}
                 </div>
               </div>
@@ -571,23 +482,18 @@ export default function DonasiPage() {
           )}
         </div>
       </section>
+
+      {/* Modal permintaan donasi */}
       {selectedDonation && (
         <div className="modal-overlay">
           <form className="donation-modal" onSubmit={handleSubmitRequest}>
-            <button
-              type="button"
-              className="modal-close"
-              onClick={closeRequestModal}
-            >
+            <button type="button" className="modal-close" onClick={closeRequestModal}>
               <X size={22} />
             </button>
-            <h2>Request Donasi</h2>
-            <p className="modal-food-name">
-              {selectedDonation.food_name}
-            </p>
+            <h2>Minta Donasi</h2>
+            <p className="modal-food-name">{selectedDonation.food_name}</p>
             <p className="modal-stock-info">
-              Tersedia: {selectedDonation.remaining_quantity}{' '}
-              {selectedDonation.unit}
+              Tersedia: {selectedDonation.remaining_quantity} {selectedDonation.unit}
             </p>
             <p className="modal-stock-info">
               Alamat Penjemputan: {selectedDonation.pickup_location || '-'}
@@ -598,54 +504,33 @@ export default function DonasiPage() {
               min="1"
               max={selectedDonation.remaining_quantity}
               value={requestForm.quantity}
-              onChange={(e) =>
-                setRequestForm((prev) => ({
-                  ...prev,
-                  quantity: e.target.value,
-                }))
-              }
+              onChange={(e) => setRequestForm((prev) => ({ ...prev, quantity: e.target.value }))}
               required
             />
             <label>Waktu Penjemputan</label>
             <input
               type="datetime-local"
               value={requestForm.pickup_time}
-              onChange={(e) =>
-                setRequestForm((prev) => ({
-                  ...prev,
-                  pickup_time: e.target.value,
-                }))
-              }
+              onChange={(e) => setRequestForm((prev) => ({ ...prev, pickup_time: e.target.value }))}
             />
             <label>Catatan</label>
             <textarea
               placeholder="Tulis catatan untuk donatur..."
               value={requestForm.notes}
-              onChange={(e) =>
-                setRequestForm((prev) => ({
-                  ...prev,
-                  notes: e.target.value,
-                }))
-              }
+              onChange={(e) => setRequestForm((prev) => ({ ...prev, notes: e.target.value }))}
             />
-            <button
-              type="submit"
-              className="modal-submit-btn"
-              disabled={actionLoading}
-            >
-              Request
+            <button type="submit" className="modal-submit-btn" disabled={actionLoading}>
+              Kirim Permintaan
             </button>
           </form>
         </div>
       )}
+
+      {/* Modal tambah donasi */}
       {showAddModal && (
         <div className="modal-overlay">
           <form className="donation-modal" onSubmit={handleAddDonation}>
-            <button
-              type="button"
-              className="modal-close"
-              onClick={() => setShowAddModal(false)}
-            >
+            <button type="button" className="modal-close" onClick={() => setShowAddModal(false)}>
               <X size={22} />
             </button>
             <h2>Tambah Donasi</h2>
@@ -653,12 +538,7 @@ export default function DonasiPage() {
             <input
               type="text"
               value={newDonation.food_name}
-              onChange={(e) =>
-                setNewDonation((prev) => ({
-                  ...prev,
-                  food_name: e.target.value,
-                }))
-              }
+              onChange={(e) => setNewDonation((prev) => ({ ...prev, food_name: e.target.value }))}
               required
             />
             <label>Jumlah</label>
@@ -666,12 +546,7 @@ export default function DonasiPage() {
               type="number"
               min="1"
               value={newDonation.quantity}
-              onChange={(e) =>
-                setNewDonation((prev) => ({
-                  ...prev,
-                  quantity: e.target.value,
-                }))
-              }
+              onChange={(e) => setNewDonation((prev) => ({ ...prev, quantity: e.target.value }))}
               required
             />
             <label>Satuan</label>
@@ -679,54 +554,30 @@ export default function DonasiPage() {
               type="text"
               placeholder="Bungkus / Ikat / Box"
               value={newDonation.unit}
-              onChange={(e) =>
-                setNewDonation((prev) => ({
-                  ...prev,
-                  unit: e.target.value,
-                }))
-              }
+              onChange={(e) => setNewDonation((prev) => ({ ...prev, unit: e.target.value }))}
               required
             />
             <label>Lokasi Penjemputan</label>
             <input
               type="text"
               value={newDonation.pickup_location}
-              onChange={(e) =>
-                setNewDonation((prev) => ({
-                  ...prev,
-                  pickup_location: e.target.value,
-                }))
-              }
+              onChange={(e) => setNewDonation((prev) => ({ ...prev, pickup_location: e.target.value }))}
               required
             />
-            <label>Kadaluarsa</label>
+            <label>Kedaluwarsa</label>
             <input
               type="date"
               value={newDonation.expiry_date}
-              onChange={(e) =>
-                setNewDonation((prev) => ({
-                  ...prev,
-                  expiry_date: e.target.value,
-                }))
-              }
+              onChange={(e) => setNewDonation((prev) => ({ ...prev, expiry_date: e.target.value }))}
               required
             />
             <label>Catatan</label>
             <textarea
               placeholder="Opsional"
               value={newDonation.notes}
-              onChange={(e) =>
-                setNewDonation((prev) => ({
-                  ...prev,
-                  notes: e.target.value,
-                }))
-              }
+              onChange={(e) => setNewDonation((prev) => ({ ...prev, notes: e.target.value }))}
             />
-            <button
-              type="submit"
-              className="modal-submit-btn"
-              disabled={actionLoading}
-            >
+            <button type="submit" className="modal-submit-btn" disabled={actionLoading}>
               Simpan Donasi
             </button>
           </form>
