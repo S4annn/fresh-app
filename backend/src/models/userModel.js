@@ -62,6 +62,7 @@ export const getUserById = async (id) => {
         email,
         role,
         address,
+        location_name,
         latitude,
         longitude,
         image_url,
@@ -128,6 +129,7 @@ export const updateUser = async (
   {
     name,
     address,
+    location_name,
     latitude,
     longitude,
   }
@@ -138,15 +140,17 @@ export const updateUser = async (
     SET
       name = COALESCE($1, name),
       address = COALESCE($2, address),
-      latitude = COALESCE($3, latitude),
-      longitude = COALESCE($4, longitude)
-    WHERE id = $5
+      location_name = COALESCE($3, location_name),
+      latitude = COALESCE($4, latitude),
+      longitude = COALESCE($5, longitude)
+    WHERE id = $6
     RETURNING 
       id,
       name,
       email,
       role,
       address,
+      location_name,
       latitude,
       longitude,
       image_url,
@@ -155,6 +159,7 @@ export const updateUser = async (
     [
       name,
       address,
+      location_name,
       latitude,
       longitude,
       id,

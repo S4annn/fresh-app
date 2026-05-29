@@ -59,6 +59,31 @@ export async function deleteAccount() {
   }
 }
 
+/**
+ * Ambil lokasi user dari backend
+ */
+export async function getUserLocation() {
+  try {
+    const response = await api.get('/users/location')
+    return response.data.data
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Gagal mengambil lokasi')
+  }
+}
+
+/**
+ * Simpan lokasi user ke backend
+ * @param {{latitude: number, longitude: number, location_name?: string}} locationData
+ */
+export async function saveUserLocationToServer(locationData) {
+  try {
+    const response = await api.post('/users/location', locationData)
+    return response.data.data
+  } catch (error) {
+    throw new Error(error.response?.data?.message || 'Gagal menyimpan lokasi')
+  }
+}
+
 export function logout() {
   localStorage.removeItem('token')
   localStorage.removeItem('user')

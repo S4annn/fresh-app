@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
-import { MapPin, Plus, X, Trash2, CheckCircle, XCircle } from 'lucide-react'
+import { MapPin, Plus, X, Trash2, CheckCircle, XCircle, Navigation } from 'lucide-react'
 import Layout from '../components/AppLayout'
 import DonationMap from '../components/DonationMap'
+import LocationPicker from '../components/LocationPicker'
 import { useFeedback } from '../components/feedback/feedbackContext'
 import {
   getDonations,
@@ -12,6 +13,7 @@ import {
   getMyDonationRequests,
   updateDonationRequestStatus,
 } from '../services/donationService'
+import { loadUserLocation } from '../utils/geo'
 import '../styles/donasi.css'
 
 export default function DonasiPage() {
@@ -27,7 +29,9 @@ export default function DonasiPage() {
   const [showAllDistance, setShowAllDistance] = useState(false)
   const [requestForm, setRequestForm] = useState({ quantity: 1, pickup_time: '', notes: '' })
   const [newDonation, setNewDonation] = useState({
-    food_name: '', quantity: '', unit: '', pickup_location: '', expiry_date: '', notes: '',
+    food_name: '', quantity: '', unit: '', pickup_location: '',
+    pickup_location_obj: null, // {location_name, latitude, longitude}
+    expiry_date: '', notes: '',
   })
 
   async function loadIncomingRequests(donationData) {
@@ -206,11 +210,13 @@ export default function DonasiPage() {
         food_name: newDonation.food_name.trim(),
         quantity: Number(newDonation.quantity),
         unit: newDonation.unit.trim(),
-        pickup_location: newDonation.pickup_location.trim(),
+        pickup_location: newDonation.pickup_location_obj?.location_name || newDonation.pickup_location.trim(),
+        latitude: newDonation.pickup_location_obj?.latitude || null,
+        longitude: newDonation.pickup_location_obj?.longitude || null,
         expiry_date: newDonation.expiry_date,
         notes: newDonation.notes || null,
       })
-      setNewDonation({ food_name: '', quantity: '', unit: '', pickup_location: '', expiry_date: '', notes: '' })
+      setNewDonation({ food_name: '', quantity: '', unit: '', pickup_location: '', pickup_location_obj: null, expiry_date: '', notes: '' })
       setShowAddModal(false)
       setActiveTab('mine')
       await refreshData()
@@ -276,6 +282,29 @@ export default function DonasiPage() {
           {actionLoading && (
             <div className="donation-action-loading">Memperbarui data...</div>
           )}
+
+          {/* Banner lokasi belum diatur */}
+          {(() => {
+            const user = JSON.parse(localStorage.getItem('user') || '{}')
+            const savedLoc = loadUserLocation()
+            const hasLocation = (user.latitude && user.longitude) || (savedLoc?.latitude && savedLoc?.longitude)
+            if (hasLocation) return null
+            return (
+              <div className="location-banner" style={{ marginBottom: 16 }}>
+                <div className="location-banner__icon">
+                  <Navigation size={20} strokeWidth={2.5} />
+                </div>
+                <div className="location-banner__text">
+                  <strong>Lokasi belum diatur</strong>
+                  <span>Atur lokasi agar bisa melihat donasi terdekat dan jarak ke donatur.</span>
+                </div>
+                <a href="/profile" className="location-banner__btn">
+                  <MapPin size={14} strokeWidth={2.5} />
+                  Atur Lokasi
+                </a>
+              </div>
+            )
+          })()}
           <div className="donation-top-actions">
             <button
               type="button"
@@ -557,13 +586,21 @@ export default function DonasiPage() {
               onChange={(e) => setNewDonation((prev) => ({ ...prev, unit: e.target.value }))}
               required
             />
-            <label>Lokasi Penjemputan</label>
-            <input
-              type="text"
-              value={newDonation.pickup_location}
-              onChange={(e) => setNewDonation((prev) => ({ ...prev, pickup_location: e.target.value }))}
+
+            {/* LocationPicker untuk lokasi penjemputan */}
+            <LocationPicker
+              value={newDonation.pickup_location_obj}
+              onChange={(loc) => setNewDonation((prev) => ({
+                ...prev,
+                pickup_location_obj: loc,
+                pickup_location: loc?.location_name || '',
+              }))}
+              label="Lokasi Penjemputan"
+              placeholder="Cari atau gunakan lokasi saat ini"
+              countryCode="id"
               required
             />
+
             <label>Kedaluwarsa</label>
             <input
               type="date"

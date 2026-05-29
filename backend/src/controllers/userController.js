@@ -150,3 +150,51 @@ export const deleteUserController = async (req, res, next) => {
     next(err)
   }
 }
+
+export const getUserLocation = async (req, res, next) => {
+  try {
+    const user = await getProfile(req.user.id)
+
+    res.json({
+      status: 'success',
+      data: {
+        latitude: user.latitude || null,
+        longitude: user.longitude || null,
+        location_name: user.location_name || null,
+      },
+    })
+  } catch (err) {
+    next(err)
+  }
+}
+
+export const updateUserLocation = async (req, res, next) => {
+  try {
+    const { latitude, longitude, location_name } = req.body
+
+    if (!latitude || !longitude) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'latitude dan longitude wajib diisi',
+      })
+    }
+
+    const updatedUser = await updateProfile(req.user.id, {
+      latitude: parseFloat(latitude),
+      longitude: parseFloat(longitude),
+      location_name: location_name || null,
+    })
+
+    res.json({
+      status: 'success',
+      message: 'Lokasi berhasil diperbarui',
+      data: {
+        latitude: updatedUser.latitude,
+        longitude: updatedUser.longitude,
+        location_name: updatedUser.location_name,
+      },
+    })
+  } catch (err) {
+    next(err)
+  }
+}

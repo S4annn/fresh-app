@@ -1,24 +1,27 @@
 import { useEffect, useMemo, useState } from 'react'
-import { MapPin, ShoppingCart, Trash2, Plus, Minus, Search } from 'lucide-react'
+import { MapPin, ShoppingCart, Trash2, Plus, Minus, Search, Navigation } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import AppLayout from '../components/AppLayout'
 import BusinessLayout from '../components/BusinessLayout'
 import MarketplaceMap from '../components/MarketplaceMap'
 import { useFeedback } from '../components/feedback/feedbackContext'
 import { getMarketplaceProducts } from '../services/marketplaceService'
 import { createTransaction } from '../services/transactionService'
+import { loadUserLocation } from '../utils/geo'
 import '../styles/marketplace.css'
 
 export default function MarketplacePage() {
   const feedback = useFeedback()
+  const navigate = useNavigate()
   const [items, setItems] = useState([])
   const [cart, setCart] = useState([])
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
   const [ordering, setOrdering] = useState(false)
   const [showAllDistance, setShowAllDistance] = useState(false)
-  const user = JSON.parse(
-    localStorage.getItem('user') || '{}'
-  )
+  const user = JSON.parse(localStorage.getItem('user') || '{}')
+  const savedLoc = loadUserLocation()
+  const hasLocation = (user.latitude && user.longitude) || (savedLoc?.latitude && savedLoc?.longitude)
 
   const isBusiness =
     user.role === 'bisnis' ||
@@ -237,6 +240,27 @@ export default function MarketplacePage() {
             </p>
           </div>
         </div>
+
+        {/* Banner lokasi belum diatur */}
+        {!hasLocation && (
+          <div className="location-banner">
+            <div className="location-banner__icon">
+              <Navigation size={20} strokeWidth={2.5} />
+            </div>
+            <div className="location-banner__text">
+              <strong>Lokasi belum diatur</strong>
+              <span>Atur lokasi Anda agar bisa melihat produk terdekat dan jarak ke penjual.</span>
+            </div>
+            <button
+              type="button"
+              className="location-banner__btn"
+              onClick={() => navigate('/profile')}
+            >
+              <MapPin size={14} strokeWidth={2.5} />
+              Atur Lokasi
+            </button>
+          </div>
+        )}
         <form
           className="marketplace-search"
           onSubmit={handleSearchSubmit}

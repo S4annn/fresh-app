@@ -1,12 +1,16 @@
 import { useEffect, useState } from 'react'
-import { Search, Plus, CalendarDays, Pencil, Trash2, X, ChevronLeft, ChevronRight, Package, ShoppingBag } from 'lucide-react'
+import { Search, Plus, CalendarDays, Pencil, Trash2, X, ChevronLeft, ChevronRight, Package, ShoppingBag, MapPin } from 'lucide-react'
 import BusinessLayout from '../components/BusinessLayout'
+import LocationPicker from '../components/LocationPicker'
+import { useFeedback } from '../components/feedback/feedbackContext'
 import { getMyProducts, addProduct, updateProduct, deleteProduct } from '../services/productService'
+import { loadUserLocation } from '../utils/geo'
 import '../styles/produkBisnis.css'
 
 const UNIT_OPTIONS = [ 'gr', 'kg', 'gram', 'liter', 'ml', 'ikat', 'pcs']
 
 export default function ProdukBisnisPage() {
+  const feedback = useFeedback()
   const [products, setProducts] = useState([])
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
@@ -23,6 +27,11 @@ export default function ProdukBisnisPage() {
     stock: '',
     unit: 'pcs',
   })
+
+  // Cek apakah user sudah set lokasi
+  const user = JSON.parse(localStorage.getItem('user') || '{}')
+  const savedLoc = loadUserLocation()
+  const hasLocation = (user.latitude && user.longitude) || (savedLoc?.latitude && savedLoc?.longitude)
 
   useEffect(() => {
     async function fetchProducts() {
@@ -97,37 +106,38 @@ export default function ProdukBisnisPage() {
             item.id === editId ? updated : item
           )
         )
+        feedback.success('Produk berhasil diperbarui')
       } else {
         const created = await addProduct(payload)
         setProducts((prev) => [created, ...prev])
         setCurrentPage(1)
+        feedback.success('Produk berhasil ditambahkan')
       }
       closeModal()
     } catch (error) {
       console.error(error)
-      alert(error.message || 'Gagal menyimpan produk')
+      feedback.error(error.message || 'Gagal menyimpan produk')
     }
   }
 
   async function handleDelete(id) {
-    const confirmDelete = window.confirm(
-      'Yakin ingin menghapus produk ini?'
-    )
-    if (!confirmDelete) return
+    const confirmed = await feedback.confirm({
+      title: 'Hapus Produk',
+      message: 'Yakin ingin menghapus produk ini? Tindakan ini tidak dapat dibatalkan.',
+      confirmLabel: 'Hapus',
+      cancelLabel: 'Batal',
+    })
+    if (!confirmed) return
     try {
       await deleteProduct(id)
-      const updatedProducts = products.filter(
-        (item) => item.id !== id
-      )
+      const updatedProducts = products.filter((item) => item.id !== id)
       setProducts(updatedProducts)
-      const newTotalPages =
-        Math.ceil(updatedProducts.length / itemsPerPage) || 1
-      setCurrentPage((prev) =>
-        Math.min(prev, newTotalPages)
-      )
+      const newTotalPages = Math.ceil(updatedProducts.length / itemsPerPage) || 1
+      setCurrentPage((prev) => Math.min(prev, newTotalPages))
+      feedback.success('Produk berhasil dihapus')
     } catch (error) {
       console.error(error)
-      alert(error.message || 'Gagal menghapus produk')
+      feedback.error(error.message || 'Gagal menghapus produk')
     }
   }
 
@@ -202,6 +212,23 @@ export default function ProdukBisnisPage() {
       <div className="product-title-section">
         <h2>Daftar Produk</h2>
       </div>
+
+      {/* Banner lokasi belum diatur */}
+      {!hasLocation && (
+        <div className="location-banner" style={{ marginBottom: 16 }}>
+          <div className="location-banner__icon">
+            <MapPin size={20} strokeWidth={2.5} />
+          </div>
+          <div className="location-banner__text">
+            <strong>Lokasi toko belum diatur</strong>
+            <span>Atur lokasi agar produk Anda muncul di marketplace dengan jarak yang akurat.</span>
+          </div>
+          <a href="/profile" className="location-banner__btn">
+            <MapPin size={14} strokeWidth={2.5} />
+            Atur Lokasi
+          </a>
+        </div>
+      )}
       <div className="product-summary-grid">
         <div className="product-summary-card">
           <div className="summary-icon green">

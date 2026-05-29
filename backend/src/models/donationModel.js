@@ -10,6 +10,8 @@ export const createDonation = async (userId, data) => {
         remaining_quantity,
         unit,
         pickup_location,
+        latitude,
+        longitude,
         expiry_date,
         donor_name,
         notes,
@@ -24,8 +26,10 @@ export const createDonation = async (userId, data) => {
         $5,
         $6,
         $7,
-        u.name,
         $8,
+        $9,
+        u.name,
+        $10,
         'available',
         NOW()
       FROM users u
@@ -39,6 +43,8 @@ export const createDonation = async (userId, data) => {
         remaining_quantity,
         unit,
         pickup_location,
+        latitude,
+        longitude,
         TO_CHAR(expiry_date, 'YYYY-MM-DD') AS expiry_date,
         donor_name,
         notes,
@@ -52,6 +58,8 @@ export const createDonation = async (userId, data) => {
       data.quantity,
       data.unit,
       data.pickup_location,
+      data.latitude || null,
+      data.longitude || null,
       data.expiry_date,
       data.notes || null,
     ]
@@ -76,8 +84,9 @@ export const getAllDonations = async (viewerId) => {
       d.notes,
       d.status,
 
-      donor.latitude AS donor_latitude,
-      donor.longitude AS donor_longitude,
+      -- Koordinat: prioritaskan dari tabel donations, fallback ke user
+      COALESCE(d.latitude, donor.latitude)   AS donor_latitude,
+      COALESCE(d.longitude, donor.longitude) AS donor_longitude,
 
       CASE
         WHEN d.user_id = $1::int THEN true
@@ -87,8 +96,8 @@ export const getAllDonations = async (viewerId) => {
       TO_CHAR(d.created_at, 'YYYY-MM-DD HH24:MI:SS') AS created_at,
 
       CASE
-        WHEN donor.latitude IS NULL
-          OR donor.longitude IS NULL
+        WHEN COALESCE(d.latitude, donor.latitude) IS NULL
+          OR COALESCE(d.longitude, donor.longitude) IS NULL
           OR viewer.latitude IS NULL
           OR viewer.longitude IS NULL
         THEN NULL
@@ -100,13 +109,13 @@ export const getAllDonations = async (viewerId) => {
                 GREATEST(
                   -1,
                   COS(RADIANS(viewer.latitude::numeric)) *
-                  COS(RADIANS(donor.latitude::numeric)) *
+                  COS(RADIANS(COALESCE(d.latitude, donor.latitude)::numeric)) *
                   COS(
-                    RADIANS(donor.longitude::numeric) -
+                    RADIANS(COALESCE(d.longitude, donor.longitude)::numeric) -
                     RADIANS(viewer.longitude::numeric)
                   ) +
                   SIN(RADIANS(viewer.latitude::numeric)) *
-                  SIN(RADIANS(donor.latitude::numeric))
+                  SIN(RADIANS(COALESCE(d.latitude, donor.latitude)::numeric))
                 )
               )
             )

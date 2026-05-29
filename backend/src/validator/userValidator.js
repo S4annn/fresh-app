@@ -87,9 +87,12 @@ export const updateProfileSchema = Joi.object({
   address: Joi.string()
     .allow('', null),
 
+  location_name: Joi.string()
+    .allow('', null),
+
   latitude: Joi.number()
     .allow(null),
 
   longitude: Joi.number()
     .allow(null),
-  }).min(1)
+}).min(1)
