@@ -51,12 +51,31 @@ export default function RegisterPage() {
     setForm((prev) => ({ ...prev, role }))
   }
 
-  function getCurrentLocation() {
+  async function getCurrentLocation() {
     if (!navigator.geolocation) {
       feedback.error('Browser Anda tidak mendukung geolokasi.')
       return
     }
-    feedback.info('Mengambil lokasi Anda...', { duration: 2000 })
+
+    // Cek status izin lokasi terlebih dahulu via Permissions API
+    if (navigator.permissions) {
+      try {
+        const status = await navigator.permissions.query({ name: 'geolocation' })
+        if (status.state === 'denied') {
+          feedback.error(
+            'Izin lokasi ditolak. Klik ikon gembok/info di address bar browser → Lokasi → Izinkan, lalu refresh halaman.',
+            { duration: 8000 }
+          )
+          return
+        }
+      } catch {
+        // Permissions API tidak tersedia, lanjut saja
+      }
+    }
+
+    setGettingLocation(true)
+    feedback.info('Mengambil lokasi Anda...', { duration: 3000 })
+
     navigator.geolocation.getCurrentPosition(
       (position) => {
         setForm((prev) => ({
@@ -64,20 +83,22 @@ export default function RegisterPage() {
           latitude: position.coords.latitude.toFixed(6),
           longitude: position.coords.longitude.toFixed(6),
         }))
-        feedback.success('Lokasi berhasil ditambahkan.')
+        setGettingLocation(false)
+        feedback.success('Lokasi berhasil ditambahkan!')
       },
       (err) => {
+        setGettingLocation(false)
         if (err.code === 1) {
           feedback.error(
-            'Izin lokasi ditolak. Klik ikon gembok di address bar → Lokasi → Izinkan, lalu refresh.',
-            { duration: 7000 }
+            'Izin lokasi ditolak. Klik ikon gembok/info di address bar browser → Lokasi → Izinkan, lalu refresh halaman.',
+            { duration: 8000 }
           )
         } else if (err.code === 2) {
-          feedback.error('Lokasi tidak tersedia. Pastikan koneksi internet aktif.')
+          feedback.error('Lokasi tidak tersedia. Pastikan koneksi internet dan GPS aktif.')
         } else if (err.code === 3) {
-          feedback.error('Waktu habis. Pastikan izin lokasi sudah diaktifkan, lalu coba lagi.')
+          feedback.error('Waktu habis mengambil lokasi. Coba lagi.')
         } else {
-          feedback.error('Gagal mengambil lokasi. Pastikan izin lokasi diaktifkan.')
+          feedback.error('Gagal mengambil lokasi.')
         }
       },
       { enableHighAccuracy: false, timeout: 15000, maximumAge: 60000 }

@@ -105,67 +105,54 @@ export default function ProfilePage() {
 
   const [gettingLocation, setGettingLocation] = useState(false)
 
-  function getCurrentLocation() {
-    return new Promise((resolve) => {
-      if (!window.isSecureContext) {
-        alert('Fitur lokasi hanya berfungsi di HTTPS atau localhost. Pastikan Anda mengakses melalui HTTPS.')
-        resolve({
-          latitude: '',
-          longitude: '',
-        })
-        return
-      }
-
-      if (!navigator.geolocation) {
-        alert('Browser Anda tidak mendukung geolokasi.')
-        resolve({ latitude: '', longitude: '' })
-        return
-      }
-
-      // Pakai low accuracy dulu (WiFi/IP) — lebih cepat & bekerja di desktop
-      // tanpa GPS hardware. maximumAge:60000 izinkan cache 1 menit.
-      const options = {
-        enableHighAccuracy: false,
-        timeout: 15000,
-        maximumAge: 60000,
-      }
-
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          resolve({
-            latitude: position.coords.latitude.toFixed(6),
-            longitude: position.coords.longitude.toFixed(6),
-          })
-        },
-        (err) => {
-          if (err.code === 1) {
-            alert(
-              'Izin lokasi ditolak.\n\nCara mengaktifkan:\n1. Klik ikon gembok/info di address bar browser\n2. Cari "Lokasi" → pilih "Izinkan"\n3. Refresh halaman dan coba lagi.'
-            )
-          } else if (err.code === 2) {
-            alert('Lokasi tidak tersedia. Pastikan koneksi internet aktif.')
-          } else if (err.code === 3) {
-            alert('Waktu habis. Pastikan izin lokasi sudah diaktifkan di browser, lalu coba lagi.')
-          } else {
-            alert('Gagal mengambil lokasi: ' + err.message)
-          }
-          resolve({ latitude: '', longitude: '' })
-        },
-        options
-      )
-    })
-  }
-
   async function handleGetLocation() {
+    if (!navigator.geolocation) {
+      alert('Browser Anda tidak mendukung geolokasi.')
+      return
+    }
+
+    // Cek status izin lokasi terlebih dahulu via Permissions API
+    if (navigator.permissions) {
+      try {
+        const status = await navigator.permissions.query({ name: 'geolocation' })
+        if (status.state === 'denied') {
+          alert(
+            'Izin lokasi ditolak.\n\nCara mengaktifkan:\n1. Klik ikon gembok/info di address bar browser\n2. Cari "Lokasi" → pilih "Izinkan"\n3. Refresh halaman dan coba lagi.'
+          )
+          return
+        }
+      } catch {
+        // Permissions API tidak tersedia, lanjut saja
+      }
+    }
+
     setGettingLocation(true)
-    const location =
-      await getCurrentLocation()
-    setUser((prev) => ({
-      ...prev,
-      latitude: location.latitude,
-      longitude: location.longitude,
-    }))
-    setGettingLocation(false)
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUser((prev) => ({
+          ...prev,
+          latitude: position.coords.latitude.toFixed(6),
+          longitude: position.coords.longitude.toFixed(6),
+        }))
+        setGettingLocation(false)
+      },
+      (err) => {
+        setGettingLocation(false)
+        if (err.code === 1) {
+          alert(
+            'Izin lokasi ditolak.\n\nCara mengaktifkan:\n1. Klik ikon gembok/info di address bar browser\n2. Cari "Lokasi" → pilih "Izinkan"\n3. Refresh halaman dan coba lagi.'
+          )
+        } else if (err.code === 2) {
+          alert('Lokasi tidak tersedia. Pastikan koneksi internet dan GPS aktif.')
+        } else if (err.code === 3) {
+          alert('Waktu habis mengambil lokasi. Coba lagi.')
+        } else {
+          alert('Gagal mengambil lokasi: ' + err.message)
+        }
+      },
+      { enableHighAccuracy: false, timeout: 15000, maximumAge: 60000 }
+    )
   }
 
   async function handleSaveProfile() {
