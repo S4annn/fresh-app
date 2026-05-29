@@ -456,6 +456,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  /* Padding ekstra agar chip tidak terpotong saat bergerak */
+  padding: 32px 24px;
 }
 
 .lp-hero__panel {
@@ -469,6 +471,16 @@
   box-shadow:
     0 30px 60px rgba(15, 23, 19, 0.16),
     0 0 0 1px rgba(15, 23, 19, 0.05);
+  /* Parallax: smooth transform */
+  will-change: transform;
+  transform-style: preserve-3d;
+  transition: box-shadow 0.3s ease;
+}
+
+.lp-hero__visual:hover .lp-hero__panel {
+  box-shadow:
+    0 40px 80px rgba(15, 23, 19, 0.22),
+    0 0 0 1px rgba(15, 23, 19, 0.06);
 }
 
 .lp-hero__panel-head {
@@ -678,6 +690,13 @@
   border-radius: 14px;
   box-shadow: 0 14px 28px rgba(15, 23, 19, 0.12);
   border: 1px solid var(--lp-border);
+  /* Parallax: smooth transform */
+  will-change: transform;
+  transition: box-shadow 0.3s ease;
+}
+
+.lp-hero__visual:hover .lp-hero__chip {
+  box-shadow: 0 20px 40px rgba(15, 23, 19, 0.18);
 }
 
 .lp-hero__chip strong {

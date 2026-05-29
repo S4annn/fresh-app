@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   ArrowRight,
@@ -199,6 +199,73 @@ export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
 
+  // Parallax mouse tracking untuk hero visual
+  const visualRef = useRef(null)
+  const rafRef = useRef(null)
+  const mouseRef = useRef({ x: 0, y: 0 })
+  const currentRef = useRef({ x: 0, y: 0 })
+
+  useEffect(() => {
+    const el = visualRef.current
+    if (!el) return
+
+    function onMouseMove(e) {
+      const rect = el.getBoundingClientRect()
+      // Normalise ke -1..1 relatif ke tengah elemen
+      mouseRef.current = {
+        x: ((e.clientX - rect.left) / rect.width - 0.5) * 2,
+        y: ((e.clientY - rect.top) / rect.height - 0.5) * 2,
+      }
+    }
+
+    function onMouseLeave() {
+      mouseRef.current = { x: 0, y: 0 }
+    }
+
+    function animate() {
+      // Lerp (smooth follow)
+      currentRef.current.x += (mouseRef.current.x - currentRef.current.x) * 0.08
+      currentRef.current.y += (mouseRef.current.y - currentRef.current.y) * 0.08
+
+      const { x, y } = currentRef.current
+
+      // Panel utama — tilt 3D ringan
+      const panel = el.querySelector('.lp-hero__panel')
+      if (panel) {
+        panel.style.transform = `
+          perspective(900px)
+          rotateY(${x * 5}deg)
+          rotateX(${-y * 4}deg)
+          translateZ(0)
+        `
+      }
+
+      // Chip atas — bergerak lebih cepat (parallax layer 2)
+      const chipTop = el.querySelector('.lp-hero__chip--top')
+      if (chipTop) {
+        chipTop.style.transform = `translate(${x * -18}px, ${y * -14}px)`
+      }
+
+      // Chip bawah — bergerak berlawanan arah (parallax layer 3)
+      const chipBot = el.querySelector('.lp-hero__chip--bottom')
+      if (chipBot) {
+        chipBot.style.transform = `translate(${x * 14}px, ${y * 12}px)`
+      }
+
+      rafRef.current = requestAnimationFrame(animate)
+    }
+
+    el.addEventListener('mousemove', onMouseMove, { passive: true })
+    el.addEventListener('mouseleave', onMouseLeave, { passive: true })
+    rafRef.current = requestAnimationFrame(animate)
+
+    return () => {
+      el.removeEventListener('mousemove', onMouseMove)
+      el.removeEventListener('mouseleave', onMouseLeave)
+      cancelAnimationFrame(rafRef.current)
+    }
+  }, [])
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12)
     onScroll()
@@ -328,7 +395,7 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="lp-hero__visual">
+            <div className="lp-hero__visual" ref={visualRef}>
               <div className="lp-hero__panel">
                 <div className="lp-hero__panel-head">
                   <div className="lp-hero__panel-dots" aria-hidden="true">
