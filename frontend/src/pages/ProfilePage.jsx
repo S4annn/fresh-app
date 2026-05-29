@@ -106,53 +106,74 @@ export default function ProfilePage() {
   const [gettingLocation, setGettingLocation] = useState(false)
 
   async function handleGetLocation() {
-    if (!navigator.geolocation) {
-      alert('Browser Anda tidak mendukung geolokasi.')
+    setGettingLocation(true)
+
+    // Coba browser geolocation dulu
+    const browserResult = await tryBrowserGeolocation()
+    if (browserResult) {
+      setUser((prev) => ({
+        ...prev,
+        latitude: browserResult.latitude,
+        longitude: browserResult.longitude,
+      }))
+      setGettingLocation(false)
+      alert('Lokasi berhasil diambil!')
       return
     }
 
-    // Cek status izin lokasi terlebih dahulu via Permissions API
-    if (navigator.permissions) {
-      try {
-        const status = await navigator.permissions.query({ name: 'geolocation' })
-        if (status.state === 'denied') {
-          alert(
-            'Izin lokasi ditolak.\n\nCara mengaktifkan:\n1. Klik ikon gembok/info di address bar browser\n2. Cari "Lokasi" → pilih "Izinkan"\n3. Refresh halaman dan coba lagi.'
-          )
-          return
-        }
-      } catch {
-        // Permissions API tidak tersedia, lanjut saja
-      }
+    // Fallback ke IP geolocation jika browser gagal
+    const ipResult = await tryIpGeolocation()
+    if (ipResult) {
+      setUser((prev) => ({
+        ...prev,
+        latitude: ipResult.latitude,
+        longitude: ipResult.longitude,
+      }))
+      setGettingLocation(false)
+      alert('Lokasi berhasil diambil (berdasarkan IP, mungkin kurang akurat).')
+      return
     }
 
-    setGettingLocation(true)
+    setGettingLocation(false)
+    alert('Gagal mengambil lokasi. Silakan isi latitude & longitude secara manual.')
+  }
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setUser((prev) => ({
-          ...prev,
-          latitude: position.coords.latitude.toFixed(6),
-          longitude: position.coords.longitude.toFixed(6),
-        }))
-        setGettingLocation(false)
-      },
-      (err) => {
-        setGettingLocation(false)
-        if (err.code === 1) {
-          alert(
-            'Izin lokasi ditolak.\n\nCara mengaktifkan:\n1. Klik ikon gembok/info di address bar browser\n2. Cari "Lokasi" → pilih "Izinkan"\n3. Refresh halaman dan coba lagi.'
-          )
-        } else if (err.code === 2) {
-          alert('Lokasi tidak tersedia. Pastikan koneksi internet dan GPS aktif.')
-        } else if (err.code === 3) {
-          alert('Waktu habis mengambil lokasi. Coba lagi.')
-        } else {
-          alert('Gagal mengambil lokasi: ' + err.message)
+  function tryBrowserGeolocation() {
+    return new Promise((resolve) => {
+      if (!navigator.geolocation) {
+        resolve(null)
+        return
+      }
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          resolve({
+            latitude: position.coords.latitude.toFixed(6),
+            longitude: position.coords.longitude.toFixed(6),
+          })
+        },
+        () => {
+          resolve(null)
+        },
+        { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
+      )
+    })
+  }
+
+  async function tryIpGeolocation() {
+    try {
+      const res = await fetch('https://ipapi.co/json/')
+      if (!res.ok) throw new Error('IP geolocation failed')
+      const data = await res.json()
+      if (data.latitude && data.longitude) {
+        return {
+          latitude: Number(data.latitude).toFixed(6),
+          longitude: Number(data.longitude).toFixed(6),
         }
-      },
-      { enableHighAccuracy: false, timeout: 15000, maximumAge: 60000 }
-    )
+      }
+      return null
+    } catch {
+      return null
+    }
   }
 
   async function handleSaveProfile() {
