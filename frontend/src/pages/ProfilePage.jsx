@@ -103,11 +103,30 @@ export default function ProfilePage() {
     }))
   }
 
+  const [gettingLocation, setGettingLocation] = useState(false)
+
   function getCurrentLocation() {
     return new Promise((resolve) => {
+      if (!window.isSecureContext) {
+        alert('Fitur lokasi hanya berfungsi di HTTPS atau localhost. Pastikan Anda mengakses melalui HTTPS.')
+        resolve({
+          latitude: '',
+          longitude: '',
+        })
+        return
+      }
+
       if (!navigator.geolocation) {
+<<<<<<< HEAD
         alert('Browser Anda tidak mendukung geolokasi.')
         resolve({ latitude: '', longitude: '' })
+=======
+        alert('Browser tidak mendukung fitur geolokasi')
+        resolve({
+          latitude: '',
+          longitude: '',
+        })
+>>>>>>> 1ca02f4 (fix bug location)
         return
       }
 
@@ -126,6 +145,7 @@ export default function ProfilePage() {
             longitude: position.coords.longitude.toFixed(6),
           })
         },
+<<<<<<< HEAD
         (err) => {
           if (err.code === 1) {
             alert(
@@ -141,11 +161,40 @@ export default function ProfilePage() {
           resolve({ latitude: '', longitude: '' })
         },
         options
+=======
+        (error) => {
+          let message = 'Gagal mengambil lokasi. '
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              message += 'Izin lokasi ditolak. Silakan aktifkan izin lokasi di pengaturan browser Anda.'
+              break
+            case error.POSITION_UNAVAILABLE:
+              message += 'Informasi lokasi tidak tersedia. Pastikan GPS/lokasi aktif di perangkat Anda.'
+              break
+            case error.TIMEOUT:
+              message += 'Waktu permintaan lokasi habis. Coba lagi.'
+              break
+            default:
+              message += 'Terjadi kesalahan yang tidak diketahui.'
+          }
+          alert(message)
+          resolve({
+            latitude: '',
+            longitude: '',
+          })
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 15000,
+          maximumAge: 0,
+        }
+>>>>>>> 1ca02f4 (fix bug location)
       )
     })
   }
 
   async function handleGetLocation() {
+    setGettingLocation(true)
     const location =
       await getCurrentLocation()
     setUser((prev) => ({
@@ -153,6 +202,7 @@ export default function ProfilePage() {
       latitude: location.latitude,
       longitude: location.longitude,
     }))
+    setGettingLocation(false)
   }
 
   async function handleSaveProfile() {
@@ -349,8 +399,9 @@ export default function ProfilePage() {
                   type="button"
                   className="get-location-btn"
                   onClick={handleGetLocation}
+                  disabled={gettingLocation}
                 >
-                  Ambil Lokasi Saya
+                  {gettingLocation ? 'Mengambil Lokasi...' : 'Ambil Lokasi Saya'}
                 </button>
               </>
             )}
