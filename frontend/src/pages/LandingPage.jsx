@@ -198,6 +198,7 @@ const TESTIMONIALS = [
 export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [activeSection, setActiveSection] = useState('beranda')
 
   // Parallax mouse tracking untuk hero visual
   const visualRef = useRef(null)
@@ -273,6 +274,32 @@ export default function LandingPage() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  // Scroll spy — deteksi section yang sedang aktif
+  useEffect(() => {
+    const sectionIds = ['beranda', 'masalah', 'fitur', 'cara-kerja', 'dampak']
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id)
+          }
+        })
+      },
+      {
+        rootMargin: '-40% 0px -55% 0px',
+        threshold: 0,
+      }
+    )
+
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id)
+      if (el) observer.observe(el)
+    })
+
+    return () => observer.disconnect()
+  }, [])
+
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? 'hidden' : ''
     return () => {
@@ -311,6 +338,7 @@ export default function LandingPage() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
+                  className={activeSection === link.href.replace('#', '') ? 'is-active' : ''}
                 >
                   {link.label}
                 </a>
