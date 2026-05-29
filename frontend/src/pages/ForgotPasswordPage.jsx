@@ -19,7 +19,7 @@ export default function ForgotPasswordPage() {
       setLoading(true)
       const cleanEmail = email.trim().toLowerCase()
       await forgotPassword(cleanEmail)
-      feedback.success('Kode reset password telah dikirim ke email Anda.')
+      feedback.success('Jika email terdaftar, instruksi reset password telah dikirim.')
       navigate('/reset-password', { state: { email: cleanEmail } })
     } catch (error) {
       feedback.error(error.message || 'Gagal mengirim kode reset password.', {

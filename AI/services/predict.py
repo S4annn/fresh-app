@@ -9,8 +9,8 @@ from PIL import Image
 
 DEFAULT_IMAGE_SIZE = (224, 224)
 MODEL_DIR = Path(__file__).resolve().parent.parent / "model"
-MODEL_PATH = MODEL_DIR / "model.keras"
-LABEL_PATH = MODEL_DIR / "class_names.json"
+MODEL_PATH = MODEL_DIR / "food_vision_model.keras"
+LABEL_PATH = MODEL_DIR / "food_labels.json"
 
 
 @tf.keras.utils.register_keras_serializable(package="custom")
@@ -47,11 +47,11 @@ class ChannelAttention(tf.keras.layers.Layer):
 def _ensure_assets_exist():
     if not MODEL_PATH.is_file():
         raise FileNotFoundError(
-            "Model tidak ditemukan. Pastikan backend/model/model.keras tersedia."
+            "Model tidak ditemukan. Pastikan AI/model/food_vision_model.keras tersedia."
         )
     if not LABEL_PATH.is_file():
         raise FileNotFoundError(
-            "Label tidak ditemukan. Pastikan backend/model/class_names.json tersedia."
+            "Label tidak ditemukan. Pastikan AI/model/food_labels.json tersedia."
         )
 
 

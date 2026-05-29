@@ -33,6 +33,23 @@ export default function ResetPasswordPage() {
   const [showConfirm, setShowConfirm] = useState(false)
   const [loading, setLoading] = useState(false)
 
+  // Evaluasi kekuatan password
+  function evaluatePasswordStrength(pass) {
+    if (!pass) return { score: 0, label: 'Sangat Lemah', color: '#e0e0e0' }
+    let score = 0
+    if (pass.length >= 6) score += 1
+    if (pass.length >= 8) score += 1
+    if (/[A-Z]/.test(pass)) score += 1
+    if (/[0-9]/.test(pass)) score += 1
+    if (/[^A-Za-z0-9]/.test(pass)) score += 1
+
+    if (score <= 1) return { score, label: 'Lemah', color: '#ef4444' }
+    if (score <= 3) return { score, label: 'Sedang', color: '#f59e0b' }
+    return { score, label: 'Kuat', color: '#10b981' }
+  }
+
+  const passwordStrength = evaluatePasswordStrength(form.newPassword)
+
   function handleChange(e) {
     const { name, value } = e.target
     setForm((prev) => ({
@@ -168,6 +185,27 @@ export default function ResetPasswordPage() {
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
+              {form.newPassword && (
+                <div className="auth-password-strength" style={{ marginTop: '6px' }}>
+                  <div style={{ display: 'flex', gap: '4px', marginBottom: '4px' }}>
+                    {[1, 2, 3, 4, 5].map((level) => (
+                      <div
+                        key={level}
+                        style={{
+                          height: '4px',
+                          flex: 1,
+                          borderRadius: '2px',
+                          backgroundColor: level <= passwordStrength.score ? passwordStrength.color : '#e5e7eb',
+                          transition: 'background-color 0.3s'
+                        }}
+                      />
+                    ))}
+                  </div>
+                  <span style={{ fontSize: '11px', color: passwordStrength.color, fontWeight: 500 }}>
+                    Kekuatan: {passwordStrength.label}
+                  </span>
+                </div>
+              )}
             </div>
             <div className="auth-field">
               <label className="auth-field__label" htmlFor="reset-confirm">Konfirmasi password</label>

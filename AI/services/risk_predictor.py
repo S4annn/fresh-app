@@ -22,6 +22,17 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from typing import Iterable
+import json
+from pathlib import Path
+from functools import lru_cache
+
+@lru_cache
+def _load_food_metadata() -> dict:
+    metadata_path = Path(__file__).resolve().parent.parent / "model" / "food_metadata.json"
+    if metadata_path.is_file():
+        with metadata_path.open("r", encoding="utf-8") as f:
+            return json.load(f)
+    return {}
 
 # ---------------------------------------------------------------------------
 # Reference data (tuned from public Indonesian food-safety guidelines)
@@ -210,13 +221,25 @@ def predict_risk(
     storage_key = _resolve_storage_key(storage_condition or storage_type or "")
     category_key = _resolve_category_key(category or "")
 
-    base_shelf = _DEFAULT_SHELF_LIFE.get(category_key, _DEFAULT_SHELF_LIFE["lainnya"])[storage_key]
-    food_adjustment = _FOOD_ADJUSTMENT.get(_normalize(food_name), 0)
+    metadata = _load_food_metadata()
+    food_key = _normalize(food_name)
+    meta = metadata.get(food_key)
 
-    if shelf_life_override and int(shelf_life_override) > 0:
-        shelf_life_days = int(shelf_life_override)
+    if meta:
+        category_key = _resolve_category_key(meta.get("category", category_key))
+        if shelf_life_override and int(shelf_life_override) > 0:
+            shelf_life_days = int(shelf_life_override)
+        else:
+            shelf_life_days = int(meta.get("shelf_life", 1))
+        display_food_name = meta.get("detected_food", food_name or "")
     else:
-        shelf_life_days = max(int(base_shelf + food_adjustment), 1)
+        base_shelf = _DEFAULT_SHELF_LIFE.get(category_key, _DEFAULT_SHELF_LIFE["lainnya"])[storage_key]
+        food_adjustment = _FOOD_ADJUSTMENT.get(_normalize(food_name), 0)
+        if shelf_life_override and int(shelf_life_override) > 0:
+            shelf_life_days = int(shelf_life_override)
+        else:
+            shelf_life_days = max(int(base_shelf + food_adjustment), 1)
+        display_food_name = food_name or ""
 
     purchase_dt = _parse_purchase_date(purchase_date)
     today = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
@@ -238,12 +261,21 @@ def predict_risk(
         qty_value = 1.0
 
     drivers = _drivers(storage_key, category_key, qty_value, days_left)
-    recommendations = _build_recommendations(food_name or "", risk_label)
-    storage_advice = _build_storage_advice(category_key, storage_key)
+    
+    if meta and meta.get("recommendations"):
+        recommendations = meta["recommendations"]
+    else:
+        recommendations = _build_recommendations(display_food_name, risk_label)
+        
+    if meta and meta.get("storage_advice"):
+        storage_advice = meta["storage_advice"]
+    else:
+        storage_advice = _build_storage_advice(category_key, storage_key)
+        
     expiry_date = (purchase_dt + timedelta(days=shelf_life_days)).strftime("%Y-%m-%d")
 
     return RiskPrediction(
-        food_name=food_name or "",
+        food_name=display_food_name,
         category=category_key,
         storage_condition=storage_condition or storage_type or "Suhu ruang",
         shelf_life_days=shelf_life_days,

@@ -101,7 +101,7 @@ export function getCurrentUser() {
 export async function forgotPassword(email) {
   try {
     const response = await api.post('/auth/forgot-password', {
-      email,
+      email: typeof email === 'string' ? email : email.email,
     })
 
     return response.data

@@ -67,9 +67,24 @@ export const registerUser = async (data) => {
     to: email,
     subject: 'Kode OTP Verifikasi Akun FRESH',
     html: `
-      <h2>Verifikasi Akun FRESH</h2>
-      <p>Kode OTP kamu:</p>
-      <h1>${otpCode}</h1>
+      <div style="font-family:Arial,sans-serif;background:#f4f7f5;padding:30px;">
+        <div style="max-width:520px;margin:auto;background:white;border-radius:14px;padding:36px;box-shadow:0 10px 30px rgba(0,0,0,0.08);">
+          <h1 style="color:#176b2c;margin-bottom:10px;text-align:center;">F.R.E.S.H</h1>
+          <p style="text-align:center;color:#666;margin-bottom:28px;">Food Resource Efficiency &amp; Smart Handling</p>
+          <h2 style="color:#111;">Verifikasi Akun</h2>
+          <p style="color:#444;">Halo,</p>
+          <p style="color:#444;">Gunakan kode OTP berikut untuk memverifikasi akun kamu:</p>
+          <div style="margin:30px 0;text-align:center;">
+            <span style="display:inline-block;background:#176b2c;color:white;font-size:34px;font-weight:bold;letter-spacing:8px;padding:18px 28px;border-radius:12px;">
+              ${otpCode}
+            </span>
+          </div>
+          <p style="color:#444;">OTP berlaku selama <strong>${process.env.OTP_EXPIRED_MINUTES || 5} menit</strong>.</p>
+          <p style="color:#444;">Jika kamu tidak mendaftar di FRESH, abaikan email ini.</p>
+          <hr style="border:none;border-top:1px solid #eee;margin:30px 0;" />
+          <p style="font-size:12px;color:#888;text-align:center;">Email otomatis dari FRESH App. Jangan balas email ini.</p>
+        </div>
+      </div>
     `,
   })
 
@@ -129,6 +144,21 @@ export const resendRegisterOtp = async ({ email }) => {
     const error = new Error('Akun sudah diverifikasi')
     error.statusCode = 400
     throw error
+  }
+
+  // Rate limiting resend OTP (cooldown 60 detik)
+  if (user.otp_expired_at) {
+    const expiredAt = new Date(user.otp_expired_at)
+    const now = new Date()
+    const diffInMinutes = (expiredAt - now) / 1000 / 60
+    const otpExpiredMinutes = Number(process.env.OTP_EXPIRED_MINUTES || 5)
+    
+    // Jika sisa waktu kadaluarsa OTP > (total batas kadaluarsa - 1 menit), berarti baru dikirim < 60 detik lalu
+    if (diffInMinutes > (otpExpiredMinutes - 1)) {
+      const error = new Error('Tunggu 60 detik sebelum meminta OTP baru')
+      error.statusCode = 429
+      throw error
+    }
   }
 
   const otpCode = generateOtp()
@@ -252,7 +282,10 @@ await sendEmail({
 
     </div>
   `,
-})
+  }).catch((err) => {
+    console.error('[resendRegisterOtp] Email terkirim, tapi ada warning/error dari layanan:', err.message)
+    // Tetap kembalikan true agar flow tidak terhenti jika layanan email error tapi DB berhasil diupdate
+  })
 
   return true
 }
@@ -415,9 +448,8 @@ export const forgotPassword = async ({ email }) => {
   const user = await getUserByEmail(email)
 
   if (!user) {
-    const error = new Error('Email tidak ditemukan')
-    error.statusCode = 404
-    throw error
+    // Mencegah User Enumeration: Tetap kembalikan success meskipun email tidak ada
+    return true
   }
 
   const otpCode = generateOtp()
@@ -429,16 +461,35 @@ export const forgotPassword = async ({ email }) => {
     otp_expired_at: otpExpiredAt,
   })
 
-  await sendEmail({
-    to: email,
-    subject: 'Kode OTP Reset Password FRESH',
-    html: `
-      <h2>Reset Password FRESH</h2>
-      <p>Kode OTP reset password kamu:</p>
-      <h1>${otpCode}</h1>
-      <p>Kode ini berlaku selama ${process.env.OTP_EXPIRED_MINUTES || 5} menit.</p>
-    `,
-  })
+  try {
+    await sendEmail({
+      to: email,
+      subject: 'Kode OTP Reset Password FRESH',
+      html: `
+        <div style="font-family:Arial,sans-serif;background:#f4f7f5;padding:30px;">
+          <div style="max-width:520px;margin:auto;background:white;border-radius:14px;padding:36px;box-shadow:0 10px 30px rgba(0,0,0,0.08);">
+            <h1 style="color:#176b2c;margin-bottom:10px;text-align:center;">F.R.E.S.H</h1>
+            <h2 style="color:#111;text-align:center;">Reset Password</h2>
+            <p style="color:#444;">Halo,</p>
+            <p style="color:#444;">Kamu meminta untuk mengatur ulang password. Gunakan kode OTP berikut:</p>
+            <div style="margin:30px 0;text-align:center;">
+              <span style="display:inline-block;background:#176b2c;color:white;font-size:34px;font-weight:bold;letter-spacing:8px;padding:18px 28px;border-radius:12px;">
+                ${otpCode}
+              </span>
+            </div>
+            <p style="color:#444;">Kode ini berlaku selama <strong>${process.env.OTP_EXPIRED_MINUTES || 5} menit</strong>.</p>
+            <p style="color:#444;">Jika kamu tidak meminta reset password, abaikan email ini.</p>
+            <hr style="border:none;border-top:1px solid #eee;margin:30px 0;" />
+            <p style="font-size:12px;color:#888;text-align:center;">Email otomatis dari FRESH App. Jangan balas email ini.</p>
+          </div>
+        </div>
+      `,
+    })
+  } catch (err) {
+    console.error('[forgotPassword] Error sending email:', err.message)
+    // Walaupun email gagal, kita kembalikan true agar tidak memunculkan internal server error ke user
+    // Kecuali kita butuh strict error handling, namun untuk mengurangi exposure lebih baik diam.
+  }
 
   return true
 }

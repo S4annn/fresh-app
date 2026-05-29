@@ -88,7 +88,7 @@ export const forgotPasswordController = async (req, res, next) => {
 
     res.json({
       status: 'success',
-      message: 'OTP reset password berhasil dikirim ke email',
+      message: 'Jika email terdaftar, instruksi reset password telah dikirim.',
     })
   } catch (err) {
     next(err)

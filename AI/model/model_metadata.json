@@ -1,0 +1,33 @@
+{
+  "project": "F.R.E.S.H - Food Resource Efficiency & Smart Handling",
+  "model_type": "RandomForestClassifier Pipeline",
+  "features": [
+    "category",
+    "quantity",
+    "shelf_life",
+    "storage_condition",
+    "days_to_expiry",
+    "expiry_ratio",
+    "waste_ratio"
+  ],
+  "labels": [
+    "High Risk",
+    "Safe",
+    "Warning"
+  ],
+  "metrics": {
+    "accuracy": 1.0,
+    "precision_weighted": 1.0,
+    "recall_weighted": 1.0,
+    "f1_weighted": 1.0
+  },
+  "input_example": {
+    "category": "Dairy",
+    "quantity": 2,
+    "shelf_life": 7,
+    "storage_condition": "Refrigerated",
+    "days_to_expiry": 2,
+    "expiry_ratio": 0.2857142857142857,
+    "waste_ratio": 0.1
+  }
+}
